@@ -1,0 +1,39 @@
+import { UserRole } from "./user.types";
+
+export enum AddressOwnerTypes {
+  USER = "USER",
+  RESTAURANT = "RESTAURANT",
+  DELIVERY_RIDER = "DELIVERY_RIDER",
+}
+
+export enum AddressLabel {
+  HOME = "HOME",
+  WORK = "WORK",
+  OTHER = "OTHER",
+  RESTAURANT = "RESTAURANT",
+}
+
+export const OWNER_TYPE_MAP: Record<string, AddressOwnerTypes> = {
+  [UserRole.CUSTOMER]: AddressOwnerTypes.USER,
+  [UserRole.RESTAURANT]: AddressOwnerTypes.RESTAURANT,
+  [UserRole.DELIVERY_RIDER]: AddressOwnerTypes.DELIVERY_RIDER,
+  [UserRole.ADMIN]: AddressOwnerTypes.USER,
+};
+
+export interface CreateAddressDto {
+  label: AddressLabel;
+  fullName: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2?: string;
+  landmark?: string;
+  city: string;
+  state: string;
+  country: string;
+  postalCode: string;
+  latitude: number;
+  longitude: number;
+  isDefault: boolean;
+}
+
+export interface updatedAddressDto extends CreateAddressDto {}
