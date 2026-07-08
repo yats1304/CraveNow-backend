@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { ADDRESS_LIMIT } from "../constants";
 import { Address } from "../models/address.model";
+import { Restaurant } from "../models";
 import {
   AddressOwnerTypes,
   CreateAddressDto,
@@ -82,6 +83,20 @@ export const createAddress = async (
     isDefault: makeDefault,
   });
 
+  if (ownerType === AddressOwnerTypes.RESTAURANT) {
+    const restaurant = await Restaurant.findOne({ ownerId: userId });
+
+    if (!restaurant) {
+      throw new ErrorHandler(
+        404,
+        "Please create your restaurant profile first.",
+      );
+    }
+
+    restaurant.primaryAddressId = address._id as mongoose.Types.ObjectId;
+    await restaurant.save();
+  }
+
   return {
     success: true,
     message: "Address created successfully",
@@ -151,6 +166,7 @@ export const updatedAddress = async (
     const duplicate = await Address.findOne({
       _id: { $ne: addressId },
       userId,
+      ownerType,
       addressLine1: data.addressLine1,
       postalCode: data.postalCode,
     });
@@ -307,7 +323,6 @@ export const deleteAddress = async (
         newDefaultAddress.isDefault = true;
         await newDefaultAddress.save({ session });
       }
-
       await session.commitTransaction();
 
       return {

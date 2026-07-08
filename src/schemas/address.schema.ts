@@ -7,7 +7,7 @@ export const addressSchema = new Schema<IAddress>(
     userId: {
       type: Schema.Types.ObjectId,
       required: true,
-      refPath: "ownerType",
+      ref: "User",
     },
 
     ownerType: {
