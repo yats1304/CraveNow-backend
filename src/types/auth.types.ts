@@ -58,10 +58,17 @@ export interface GoogleLoginDto {
   idToken: string;
   deviceId: string;
 }
-
 export interface ChangePasswordDto {
   userId: string;
   currentPassword: string;
   newPassword: string;
   deviceId: string;
+}
+
+export interface GoogleUser {
+  googleId: string;
+  email: string;
+  name: string;
+  avatar?: string;
+  emailVerified?: boolean;
 }

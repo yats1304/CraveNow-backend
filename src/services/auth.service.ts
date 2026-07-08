@@ -15,6 +15,7 @@ import {
   ChangePasswordDto,
   ForgotPasswordDto,
   GoogleLoginDto,
+  GoogleUser,
   LoginDto,
   LogoutDto,
   refreshTokenDto,
@@ -455,7 +456,7 @@ export const logout = async ({ userId, deviceId }: LogoutDto) => {
 };
 
 export const googleLogin = async ({ idToken, deviceId }: GoogleLoginDto) => {
-  const googleUser = await verifyGoogleIdToken(idToken);
+  const googleUser: GoogleUser = await verifyGoogleIdToken(idToken);
 
   let user = await User.findOne({ email: googleUser.email });
 
