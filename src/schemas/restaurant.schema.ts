@@ -1,6 +1,7 @@
 import { Schema } from "mongoose";
-import { IRestaurant } from "../interfaces";
-import { RestaurantStatus, RestaurantType } from "../types/restaurant.types";
+import { IRestaurant } from "../interfaces/index.js";
+import { RestaurantStatus, RestaurantType } from "../types/restaurant.types.js";
+import { imageSchema } from "./image.schema.js";
 
 export const restaurantSchema = new Schema<IRestaurant>(
   {
@@ -23,12 +24,12 @@ export const restaurantSchema = new Schema<IRestaurant>(
     },
 
     logo: {
-      type: String,
-      default: "",
+      type: imageSchema,
+      default: null,
     },
     banner: {
-      type: String,
-      default: "",
+      type: imageSchema,
+      default: null,
     },
 
     primaryAddressId: {

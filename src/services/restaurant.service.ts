@@ -1,12 +1,16 @@
-import { RESTAURANT_VERIFICATION_FIELDS } from "../constants";
-import { Address, Restaurant } from "../models";
+import {
+  CLOUDINARY_FOLDERS,
+  RESTAURANT_VERIFICATION_FIELDS,
+} from "../constants/index.js";
+import { Address, Restaurant } from "../models/index.js";
 import {
   AddressOwnerTypes,
   CreateRestaurantDto,
   RestaurantStatus,
   UpdateRestaurantDto,
-} from "../types";
-import { ErrorHandler } from "../utils";
+} from "../types/index.js";
+import { ErrorHandler } from "../utils/index.js";
+import { replaceImage } from "./cloudinary.service.js";
 
 export const createRestaurant = async (
   userId: string,
@@ -219,5 +223,39 @@ export const updateRestaurantOpenStatus = async (
     success: true,
     message: `Restaurant is now ${isOpen ? "Open" : "Closed"}`,
     restaurant,
+  };
+};
+
+export const uploadRestaurantLogo = async (
+  userId: string,
+  file: Express.Multer.File,
+) => {
+  if (!file) {
+    throw new ErrorHandler(400, "Logo image is required!");
+  }
+
+  const restaurant = await Restaurant.findOne({ ownerId: userId });
+
+  if (!restaurant) {
+    throw new ErrorHandler(404, "Restaurant not found!");
+  }
+
+  const image = await replaceImage(
+    file,
+    restaurant.logo?.publicId || null,
+    CLOUDINARY_FOLDERS.RESTAURANT_LOGO,
+  );
+
+  restaurant.logo = {
+    url: image.url,
+    publicId: image.publicId,
+  };
+
+  await restaurant.save();
+
+  return {
+    success: true,
+    message: "Restaurant logo updated successfully.",
+    logo: restaurant.logo,
   };
 };

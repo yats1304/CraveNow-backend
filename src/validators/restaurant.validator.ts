@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { objectIdSchema } from "./common.validator";
-import { RestaurantType, RestaurantStatus } from "../types";
+import { objectIdSchema } from "./common.validator.js";
+import { RestaurantType, RestaurantStatus } from "../types/index.js";
 
 export const createRestaurantSchema = z.object({
   name: z

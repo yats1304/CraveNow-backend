@@ -1,6 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
-import { ErrorHandler } from "./errorHandler";
-import { GoogleUser } from "../types";
+import { ErrorHandler } from "./errorHandler.js";
+import { GoogleUser } from "../types/index.js";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 

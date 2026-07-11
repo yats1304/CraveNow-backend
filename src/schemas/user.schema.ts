@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
-import { IUser } from "../interfaces";
+import { IUser } from "../interfaces/index.js";
 
-import { AccountStatus, AuthProvider, UserRole } from "../types";
+import { AccountStatus, AuthProvider, UserRole } from "../types/index.js";
 
 export const userSchema = new Schema<IUser>(
   {

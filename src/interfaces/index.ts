@@ -1,3 +1,3 @@
-export * from "./user.interface";
-export * from "./address.interface";
-export * from "./restaurant.interface";
+export * from "./user.interface.js";
+export * from "./address.interface.js";
+export * from "./restaurant.interface.js";

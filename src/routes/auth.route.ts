@@ -1,6 +1,6 @@
 import express from "express";
-import * as authController from "../controllers";
-import { validate } from "../middlewares/validate.middleware";
+import * as authController from "../controllers/index.js";
+import { validate } from "../middlewares/validate.middleware.js";
 import {
   changePasswordSchema,
   forgotPasswordSchema,
@@ -11,8 +11,8 @@ import {
   resendOtpSchema,
   resetPasswordSchema,
   verifyOtpSchema,
-} from "../validators/auth.validation";
-import { isAuth } from "../middlewares/auth.middleware";
+} from "../validators/auth.validation.js";
+import { isAuth } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 

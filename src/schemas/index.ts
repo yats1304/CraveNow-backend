@@ -1,3 +1,3 @@
-export * from "./user.schema";
-export * from "./address.schema";
-export * from "./restaurant.schema";
+export * from "./user.schema.js";
+export * from "./address.schema.js";
+export * from "./restaurant.schema.js";

@@ -1,5 +1,6 @@
-import { TryCatch } from "../utils";
-import * as restaurantService from "../services";
+import { TryCatch } from "../utils/index.js";
+import * as restaurantService from "../services/index.js";
+import { User } from "../models/index.js";
 
 export const createRestaurant = TryCatch(async (req, res) => {
   const { userId } = req.user!;
@@ -31,6 +32,14 @@ export const updateRestaurantOpenStatus = TryCatch(async (req, res) => {
     userId,
     req.body.isOpen,
   );
+
+  return res.json(data);
+});
+
+export const uploadRestaurantLogo = TryCatch(async (req, res) => {
+  const { userId } = req.user!;
+
+  const data = await restaurantService.uploadRestaurantLogo(userId, req.file!);
 
   return res.json(data);
 });

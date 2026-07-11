@@ -1,3 +1,3 @@
-export * from "./auth.controller";
-export * from "./address.controller";
-export * from "./restaurant.controller";
+export * from "./auth.controller.js";
+export * from "./address.controller.js";
+export * from "./restaurant.controller.js";

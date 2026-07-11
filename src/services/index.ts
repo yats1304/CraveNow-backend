@@ -1,3 +1,4 @@
-export * from "./auth.service";
-export * from "./address.service";
-export * from "./restaurant.service";
+export * from "./auth.service.js";
+export * from "./address.service.js";
+export * from "./restaurant.service.js";
+export * from "./cloudinary.service.js";

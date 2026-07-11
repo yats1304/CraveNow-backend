@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
-import { ErrorHandler } from ".";
+import { ErrorHandler } from "./errorHandler.js";
+
 
 export const TryCatch =
   (

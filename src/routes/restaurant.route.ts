@@ -1,14 +1,15 @@
 import express from "express";
-import * as restaurantController from "../controllers";
-import { isAuth } from "../middlewares/auth.middleware";
-import { validate } from "../middlewares/validate.middleware";
+import * as restaurantController from "../controllers/index.js";
+import { isAuth } from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
 import {
   createRestaurantSchema,
   updateRestaurantOpenStatusSchema,
   updateRestaurantSchema,
-} from "../validators";
-import { authorizeRoles } from "../middlewares/authorizeRoles.middleware";
-import { UserRole } from "../types";
+} from "../validators/index.js";
+import { authorizeRoles } from "../middlewares/authorizeRoles.middleware.js";
+import { UserRole } from "../types/index.js";
+import { upload } from "../middlewares/upload.middleware.js";
 
 const router = express.Router();
 
@@ -34,6 +35,14 @@ router.patch(
   authorizeRoles(UserRole.RESTAURANT),
   validate(updateRestaurantOpenStatusSchema),
   restaurantController.updateRestaurantOpenStatus,
+);
+
+router.patch(
+  "/logo",
+  isAuth,
+  authorizeRoles(UserRole.RESTAURANT),
+  upload.single("logo"),
+  restaurantController.uploadRestaurantLogo,
 );
 
 router.get(

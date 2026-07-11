@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { UserRole } from "../types";
+import { UserRole } from "../types/index.js";
 import {
   deviceIdSchema,
   emailSchema,
   otpSchema,
   passwordSchema,
   phoneSchema,
-} from "./common.validator";
+} from "./common.validator.js";
 
 // Register
 export const registerSchema = z.object({

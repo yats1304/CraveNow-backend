@@ -1,4 +1,4 @@
-import { AddressOwnerTypes } from "../types";
+import { AddressOwnerTypes } from "../types/index.js";
 
 export const ADDRESS_LIMIT = {
   [AddressOwnerTypes.USER]: 7,

@@ -1,4 +1,4 @@
-import { UserRole } from "./user.types";
+import { UserRole } from "./user.types.js";
 
 export enum AddressOwnerTypes {
   USER = "USER",

@@ -1,4 +1,4 @@
-import { JwtPayload } from "../types";
+import { JwtPayload } from "../types/index.js";
 import jwt, { SignOptions } from "jsonwebtoken";
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET!;

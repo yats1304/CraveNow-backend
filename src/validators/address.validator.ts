@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { AddressLabel, AddressOwnerTypes } from "../types";
-import { objectIdSchema, phoneSchema } from "./common.validator";
+import { AddressLabel, AddressOwnerTypes } from "../types/index.js";
+import { objectIdSchema, phoneSchema } from "./common.validator.js";
 
 const coordinateSchema = z.object({
   latitude: z

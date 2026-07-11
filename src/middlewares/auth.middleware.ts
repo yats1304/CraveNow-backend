@@ -1,6 +1,6 @@
-import { User } from "../models";
-import { AccountStatus } from "../types";
-import { ErrorHandler, TryCatch, verifyAccessToken } from "../utils";
+import { User } from "../models/index.js";
+import { AccountStatus } from "../types/index.js";
+import { ErrorHandler, TryCatch, verifyAccessToken } from "../utils/index.js";
 
 export const isAuth = TryCatch(async (req, res, next) => {
   const authHeader = req.headers.authorization;

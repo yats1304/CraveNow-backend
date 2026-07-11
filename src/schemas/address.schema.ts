@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
-import { IAddress } from "../interfaces/address.interface";
-import { AddressLabel, AddressOwnerTypes } from "../types";
+import { IAddress } from "../interfaces/address.interface.js";
+import { AddressLabel, AddressOwnerTypes } from "../types/index.js";
 
 export const addressSchema = new Schema<IAddress>(
   {

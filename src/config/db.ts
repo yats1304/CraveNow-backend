@@ -1,16 +1,5 @@
 import mongoose from "mongoose";
 
-// Log connection events
-mongoose.connection.on("connected", () => {
-  console.log("Mongoose default connection open to DB");
-});
-mongoose.connection.on("error", (err) => {
-  console.error("Mongoose default connection error:", err);
-});
-mongoose.connection.on("disconnected", () => {
-  console.log("Mongoose default connection disconnected");
-});
-
 export const connectDB = async () => {
   try {
     console.log("Starting MongoDB connection attempt...");

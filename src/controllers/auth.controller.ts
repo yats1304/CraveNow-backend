@@ -1,5 +1,5 @@
-import * as authService from "../services";
-import { ErrorHandler, setAuthCookies, TryCatch } from "../utils";
+import * as authService from "../services/index.js";
+import { ErrorHandler, setAuthCookies, TryCatch } from "../utils/index.js";
 
 export const register = TryCatch(async (req, res) => {
   const data = await authService.registerUser(req.body);

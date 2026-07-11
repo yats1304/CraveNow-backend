@@ -1,0 +1,52 @@
+import { Readable } from "stream";
+import cloudinary from "../config/cloudinary.js";
+import { IImage, UploadImageOptions } from "../types/image.types.js";
+import { ErrorHandler } from "../utils/index.js";
+
+export const uploadImage = async (
+  file: Express.Multer.File,
+  Options: UploadImageOptions,
+): Promise<IImage> => {
+  if (!file) {
+    throw new ErrorHandler(400, "Image file is required.");
+  }
+
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: Options.folder,
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error || !result) {
+          console.error("Cloudinary Upload Error:", error);
+          return reject(new ErrorHandler(500, error?.message || "Failed to upload image."));
+        }
+
+        resolve({
+          url: result.secure_url,
+          publicId: result.public_id,
+        });
+      },
+    );
+    Readable.from(file.buffer).pipe(uploadStream);
+  });
+};
+
+export const deleteImage = async (publicId: string): Promise<void> => {
+  if (!publicId) return;
+
+  await cloudinary.uploader.destroy(publicId);
+};
+
+export const replaceImage = async (
+  file: Express.Multer.File,
+  oldPublicId: string | null,
+  folder: string,
+): Promise<IImage> => {
+  if (oldPublicId) {
+    await deleteImage(oldPublicId);
+  }
+
+  return uploadImage(file, { folder });
+};

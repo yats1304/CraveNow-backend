@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import authRoutes from "./routes/auth.route";
-import addressRoutes from "./routes/address.route";
-import restaurantRoutes from "./routes/restaurant.route";
-import { globalErrorHandler } from "./middlewares/error.middleware";
+import authRoutes from "./routes/auth.route.js";
+import addressRoutes from "./routes/address.route.js";
+import restaurantRoutes from "./routes/restaurant.route.js";
+import { globalErrorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 

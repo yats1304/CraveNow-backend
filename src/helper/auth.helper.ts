@@ -1,8 +1,8 @@
-import { redisClient } from "../config/redis";
-import { REFRESH_TOKEN_EXPIRY } from "../constants";
-import { UserRole } from "../types";
-import { generateAccessToken, generateRefreshToken } from "../utils";
-import { getRefreshKey } from "../constants";
+import { redisClient } from "../config/redis.js";
+import { REFRESH_TOKEN_EXPIRY } from "../constants/index.js";
+import { UserRole } from "../types/index.js";
+import { generateAccessToken, generateRefreshToken } from "../utils/index.js";
+import { getRefreshKey } from "../constants/index.js";
 
 interface CreateSessionParams {
   userId: string;

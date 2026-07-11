@@ -1,5 +1,5 @@
 import { createTransport } from "nodemailer";
-import { SendMailOptions } from "../types";
+import { SendMailOptions } from "../types/index.js";
 
 const transporter = createTransport({
   host: process.env.SMTP_HOST,

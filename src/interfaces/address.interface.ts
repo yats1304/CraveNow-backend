@@ -1,5 +1,5 @@
 import { Document, Types } from "mongoose";
-import { AddressLabel, AddressOwnerTypes } from "../types";
+import { AddressLabel, AddressOwnerTypes } from "../types/index.js";
 
 export interface IGeoLocation {
   type: "Point";

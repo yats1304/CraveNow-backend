@@ -1,12 +1,12 @@
 import express from "express";
-import { isAuth } from "../middlewares/auth.middleware";
-import { validate } from "../middlewares/validate.middleware";
+import { isAuth } from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
 import {
   AddressIdParam,
   createAddressSchema,
   updateAddressSchema,
-} from "../validators";
-import * as addressController from "../controllers";
+} from "../validators/index.js";
+import * as addressController from "../controllers/index.js";
 
 const router = express.Router();
 

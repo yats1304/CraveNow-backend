@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRole } from "../types";
-import { ErrorHandler } from "../utils";
+import { UserRole } from "../types/index.js";
+import { ErrorHandler } from "../utils/index.js";
 
 export const authorizeRoles =
   (...roles: UserRole[]) =>

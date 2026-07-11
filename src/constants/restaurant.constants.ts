@@ -1,5 +1,5 @@
-import { UpdateRestaurantDto } from "../types";
-import { RestaurantStatus } from "../types";
+import { UpdateRestaurantDto } from "../types/index.js";
+import { RestaurantStatus } from "../types/index.js";
 
 export const RESTAURANT_VERIFICATION_FIELDS: (keyof UpdateRestaurantDto)[] = [
   "name",

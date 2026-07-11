@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import { AccountStatus, AuthProvider, UserRole } from "../types";
+import { AccountStatus, AuthProvider, UserRole } from "../types/index.js";
 
 export interface IUser extends Document {
   name: string;

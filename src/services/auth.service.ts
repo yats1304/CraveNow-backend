@@ -1,14 +1,14 @@
-import { redisClient } from "../config/redis";
+import { redisClient } from "../config/redis.js";
 import {
   getRefreshKey,
   MAX_OTP_RESEND,
   OTP_EXPIRY,
   OTP_RESEND_COOLDOWN,
   REFRESH_TOKEN_EXPIRY,
-} from "../constants";
-import { User } from "../models";
-import { verificationEmailTemplate } from "../templates/email-verification.template";
-import { welcomeEmailTemplate } from "../templates/welcome.template";
+} from "../constants/index.js";
+import { User } from "../models/index.js";
+import { verificationEmailTemplate } from "../templates/email-verification.template.js";
+import { welcomeEmailTemplate } from "../templates/welcome.template.js";
 import {
   AccountStatus,
   AuthProvider,
@@ -23,7 +23,7 @@ import {
   ResentOtpDto,
   ResetPasswordDto,
   VerifyOtpDto,
-} from "../types";
+} from "../types/index.js";
 import {
   hashPassword,
   ErrorHandler,
@@ -33,10 +33,10 @@ import {
   generateRefreshToken,
   comparePassword,
   verifyRefreshToken,
-} from "../utils";
-import { forgotPasswordTemplate } from "../templates/forgot-password.template";
-import { verifyGoogleIdToken } from "../utils/google";
-import { createUserSession } from "../helper";
+} from "../utils/index.js";
+import { forgotPasswordTemplate } from "../templates/forgot-password.template.js";
+import { verifyGoogleIdToken } from "../utils/google.js";
+import { createUserSession } from "../helper/index.js";
 
 export const registerUser = async (registerData: RegisterUserDto) => {
   const { name, email, password, phone, role } = registerData;

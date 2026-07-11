@@ -1,6 +1,6 @@
-import { TryCatch, ErrorHandler } from "../utils";
-import * as addressService from "../services";
-import { AddressOwnerTypes, OWNER_TYPE_MAP } from "../types";
+import { TryCatch, ErrorHandler } from "../utils/index.js";
+import * as addressService from "../services/index.js";
+import { AddressOwnerTypes, OWNER_TYPE_MAP } from "../types/index.js";
 
 export const createAddress = TryCatch(async (req, res) => {
   const { userId, role } = req.user!;

@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
-import { ADDRESS_LIMIT } from "../constants";
-import { Address } from "../models/address.model";
-import { Restaurant } from "../models";
+import { ADDRESS_LIMIT } from "../constants/index.js";
+import { Address } from "../models/address.model.js";
+import { Restaurant } from "../models/index.js";
 import {
   AddressOwnerTypes,
   CreateAddressDto,
   updatedAddressDto,
-} from "../types";
-import { ErrorHandler } from "../utils";
+} from "../types/index.js";
+import { ErrorHandler } from "../utils/index.js";
 
 export const createAddress = async (
   userId: string,

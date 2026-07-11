@@ -1,3 +1,3 @@
-export * from "./email-verification.template";
-export * from "./forgot-password.template";
-export * from "./welcome.template";
+export * from "./email-verification.template.js";
+export * from "./forgot-password.template.js";
+export * from "./welcome.template.js";

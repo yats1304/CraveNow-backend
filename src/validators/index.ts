@@ -1,6 +1,6 @@
-export * from "./auth.validation";
-export * from "./common.validator";
-export * from "./address.validator";
-export * from "./restaurant.validator";
+export * from "./auth.validation.js";
+export * from "./common.validator.js";
+export * from "./address.validator.js";
+export * from "./restaurant.validator.js";
 
 
