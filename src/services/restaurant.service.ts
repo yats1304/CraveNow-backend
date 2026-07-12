@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import {
   CLOUDINARY_FOLDERS,
   RESTAURANT_VERIFICATION_FIELDS,
@@ -20,6 +21,7 @@ export const createRestaurant = async (
     name,
     description,
     restaurantType,
+    cuisineIds,
     gstNumber,
     fssaiLicenseNumber,
     minimumOrderAmount,
@@ -38,6 +40,7 @@ export const createRestaurant = async (
     name,
     description,
     restaurantType,
+    cuisineIds: cuisineIds.map((id) => new Types.ObjectId(id)),
     primaryAddressId: null,
     gstNumber,
     fssaiLicenseNumber,
@@ -143,6 +146,10 @@ export const updateRestaurant = async (
 
   if (data.restaurantType !== undefined) {
     restaurant.restaurantType = data.restaurantType;
+  }
+
+  if (data.cuisineIds !== undefined) {
+    restaurant.cuisineIds = data.cuisineIds.map((id) => new Types.ObjectId(id));
   }
 
   if (data.minimumOrderAmount !== undefined) {

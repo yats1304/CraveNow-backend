@@ -17,6 +17,7 @@ export interface CreateRestaurantDto {
   name: string;
   description: string;
   restaurantType: RestaurantType;
+  cuisineIds: string[];
   gstNumber?: string;
   fssaiLicenseNumber: string;
   minimumOrderAmount: number;

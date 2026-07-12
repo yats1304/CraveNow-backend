@@ -10,6 +10,7 @@ export interface IRestaurant extends Document {
   banner?: IImage;
   primaryAddressId: Types.ObjectId | null;
   restaurantType: RestaurantType;
+  cuisineIds: Types.ObjectId[];
   gstNumber?: string;
   fssaiLicenseNumber: string;
   minimumOrderAmount: number;

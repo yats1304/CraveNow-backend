@@ -44,6 +44,14 @@ export const restaurantSchema = new Schema<IRestaurant>(
       required: true,
     },
 
+    cuisineIds: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Cuisine",
+        required: true,
+      },
+    ],
+
     gstNumber: {
       type: String,
       trim: true,

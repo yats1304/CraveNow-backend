@@ -5,3 +5,4 @@ export * from "./jwt.js";
 export * from "./otp.js";
 export * from "./mail.js";
 export * from "./cookie.js";
+export * from "./slugify.js";

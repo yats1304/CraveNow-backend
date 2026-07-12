@@ -36,6 +36,11 @@ export const createRestaurantSchema = z.object({
     }),
   }),
 
+  cuisineIds: z
+    .array(objectIdSchema)
+    .min(1, "At least one cuisine is required.")
+    .max(5, "Maximum 5 cuisines are allowed."),
+
   gstNumber: z
     .string()
     .trim()
