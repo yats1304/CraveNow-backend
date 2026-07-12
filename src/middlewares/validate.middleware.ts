@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ZodSchema } from "zod";
 import sanitize from "mongo-sanitize";
 
-type ValidateSource = "body" | "query" | "params";
+type ValidateSource = "body" | "query" | "params" | "file";
 
 export const validate =
   <T>(schema: ZodSchema<T>, source: ValidateSource = "body") =>
@@ -44,6 +44,9 @@ export const validate =
           configurable: true,
           enumerable: true,
         });
+      }
+      if (source === "file") {
+        req.file = result.data as Express.Multer.File;
       }
 
       next();

@@ -240,6 +240,13 @@ export const uploadRestaurantLogo = async (
     throw new ErrorHandler(404, "Restaurant not found!");
   }
 
+  if (restaurant.status === RestaurantStatus.SUSPENDED) {
+    throw new ErrorHandler(
+      403,
+      "Your restaurant is suspended. You cannot update the logo.",
+    );
+  }
+
   const image = await replaceImage(
     file,
     restaurant.logo?.publicId || null,
@@ -257,5 +264,46 @@ export const uploadRestaurantLogo = async (
     success: true,
     message: "Restaurant logo updated successfully.",
     logo: restaurant.logo,
+  };
+};
+
+export const uploadRestaurantBanner = async (
+  userId: string,
+  file: Express.Multer.File,
+) => {
+  if (!file) {
+    throw new ErrorHandler(400, "Banner image is required!");
+  }
+
+  const restaurant = await Restaurant.findOne({ ownerId: userId });
+
+  if (!restaurant) {
+    throw new ErrorHandler(404, "Restaurant not found!");
+  }
+
+  if (restaurant.status === RestaurantStatus.SUSPENDED) {
+    throw new ErrorHandler(
+      403,
+      "Your restaurant is suspended. You cannot update the banner.",
+    );
+  }
+
+  const image = await replaceImage(
+    file,
+    restaurant.banner?.publicId || null,
+    CLOUDINARY_FOLDERS.RESTAURANT_BANNER,
+  );
+
+  restaurant.banner = {
+    url: image.url,
+    publicId: image.publicId,
+  };
+
+  await restaurant.save();
+
+  return {
+    success: true,
+    message: "Restaurant banner updated successfully.",
+    banner: restaurant.banner,
   };
 };

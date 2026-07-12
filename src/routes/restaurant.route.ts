@@ -6,6 +6,8 @@ import {
   createRestaurantSchema,
   updateRestaurantOpenStatusSchema,
   updateRestaurantSchema,
+  uploadLogoSchema,
+  uploadBannerSchema,
 } from "../validators/index.js";
 import { authorizeRoles } from "../middlewares/authorizeRoles.middleware.js";
 import { UserRole } from "../types/index.js";
@@ -42,7 +44,17 @@ router.patch(
   isAuth,
   authorizeRoles(UserRole.RESTAURANT),
   upload.single("logo"),
+  validate(uploadLogoSchema, "file"),
   restaurantController.uploadRestaurantLogo,
+);
+
+router.patch(
+  "/banner",
+  isAuth,
+  authorizeRoles(UserRole.RESTAURANT),
+  upload.single("banner"),
+  validate(uploadBannerSchema, "file"),
+  restaurantController.uploadRestaurantBanner,
 );
 
 router.get(

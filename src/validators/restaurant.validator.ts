@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { objectIdSchema } from "./common.validator.js";
+import { objectIdSchema, fileSchema } from "./common.validator.js";
 import { RestaurantType, RestaurantStatus } from "../types/index.js";
 
 export const createRestaurantSchema = z.object({
@@ -98,4 +98,12 @@ export const restaurantIdParamSchema = z.object({
 
 export const updateRestaurantOpenStatusSchema = z.object({
   isOpen: z.boolean(),
+});
+
+export const uploadLogoSchema = fileSchema({
+  fieldname: "logo",
+});
+
+export const uploadBannerSchema = fileSchema({
+  fieldname: "banner",
 });

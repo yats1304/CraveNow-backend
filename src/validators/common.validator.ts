@@ -34,3 +34,24 @@ export const deviceIdSchema = z
   .trim()
   .min(1, "Device ID is required")
   .max(255, "Device ID is too long");
+
+export const fileSchema = (options: {
+  fieldname: string;
+  maxSize?: number;
+  allowedMimetypes?: string[];
+}) => {
+  const { fieldname, maxSize = 5 * 1024 * 1024, allowedMimetypes = ["image/"] } = options;
+  return z.object({
+    fieldname: z.literal(fieldname, {
+      message: `Field name must be '${fieldname}'`,
+    }),
+    originalname: z.string(),
+    encoding: z.string(),
+    mimetype: z.string().refine(
+      (val) => allowedMimetypes.some((mime) => val.startsWith(mime)),
+      { message: `Only ${allowedMimetypes.map(m => m.endsWith('/') ? m.slice(0, -1) + ' files' : m).join(", ")} are allowed` }
+    ),
+    size: z.number().max(maxSize, `File size must be less than ${maxSize / (1024 * 1024)}MB`),
+    buffer: z.any(),
+  });
+};

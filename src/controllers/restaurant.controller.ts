@@ -43,3 +43,14 @@ export const uploadRestaurantLogo = TryCatch(async (req, res) => {
 
   return res.json(data);
 });
+
+export const uploadRestaurantBanner = TryCatch(async (req, res) => {
+  const { userId } = req.user!;
+
+  const data = await restaurantService.uploadRestaurantBanner(
+    userId,
+    req.file!,
+  );
+
+  return res.json(data);
+});
