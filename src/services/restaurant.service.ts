@@ -184,6 +184,7 @@ export const getMyRestaurant = async (userId: string) => {
       select:
         "label fullName phone addressLine1 addressLine2 landmark city state country postalCode location isDefault",
     })
+    .populate("cuisineIds")
     .lean();
 
   if (!restaurant) {
