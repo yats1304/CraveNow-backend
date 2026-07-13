@@ -156,6 +156,8 @@ export const updateCategory = async (
   categoryId: string,
   data: UpdateCategoryDto,
 ) => {
+  const { name, ...updateFields } = data;
+
   const restaurant = await Restaurant.findOne({
     ownerId: userId,
   });
@@ -183,8 +185,8 @@ export const updateCategory = async (
     throw new ErrorHandler(404, "Category not found.");
   }
 
-  if (data.name !== undefined) {
-    const normalizedName = data.name.trim();
+  if (name !== undefined) {
+    const normalizedName = name.trim();
 
     const existingCategory = await Category.findOne({
       _id: { $ne: categoryId },
@@ -203,8 +205,8 @@ export const updateCategory = async (
     category.slug = generateSlug(normalizedName);
   }
 
-  if (data.description !== undefined) {
-    category.description = data.description.trim();
+  if (Object.keys(updateFields).length > 0) {
+    category.set(updateFields);
   }
 
   await category.save();

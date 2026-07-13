@@ -63,6 +63,15 @@ export const updateRestaurant = async (
   userId: string,
   data: UpdateRestaurantDto,
 ) => {
+  const {
+    name,
+    gstNumber,
+    fssaiLicenseNumber,
+    primaryAddressId,
+    cuisineIds,
+    ...updateFields
+  } = data;
+
   if (Object.keys(data).length === 0) {
     throw new ErrorHandler(400, "No update fields provided.");
   }
@@ -80,8 +89,8 @@ export const updateRestaurant = async (
     );
   }
 
-  if (data.name !== undefined) {
-    const trimmedName = data.name.trim();
+  if (name !== undefined) {
+    const trimmedName = name.trim();
     const duplicate = await Restaurant.findOne({
       name: { $regex: `^${trimmedName}$`, $options: "i" },
       _id: { $ne: restaurant._id },
@@ -92,8 +101,8 @@ export const updateRestaurant = async (
     restaurant.name = trimmedName;
   }
 
-  if (data.gstNumber !== undefined) {
-    const trimmedGst = data.gstNumber.trim();
+  if (gstNumber !== undefined) {
+    const trimmedGst = gstNumber.trim();
     const duplicate = await Restaurant.findOne({
       gstNumber: trimmedGst,
       _id: { $ne: restaurant._id },
@@ -104,8 +113,8 @@ export const updateRestaurant = async (
     restaurant.gstNumber = trimmedGst;
   }
 
-  if (data.fssaiLicenseNumber !== undefined) {
-    const trimmedFssai = data.fssaiLicenseNumber.trim();
+  if (fssaiLicenseNumber !== undefined) {
+    const trimmedFssai = fssaiLicenseNumber.trim();
     const duplicate = await Restaurant.findOne({
       fssaiLicenseNumber: trimmedFssai,
       _id: { $ne: restaurant._id },
@@ -119,16 +128,16 @@ export const updateRestaurant = async (
     restaurant.fssaiLicenseNumber = trimmedFssai;
   }
 
-  if (data.primaryAddressId !== undefined) {
+  if (primaryAddressId !== undefined) {
     const address = await Address.findOne({
-      _id: data.primaryAddressId,
+      _id: primaryAddressId,
       userId,
       ownerType: AddressOwnerTypes.RESTAURANT,
     });
     if (!address) {
       throw new ErrorHandler(404, "Restaurant address not found.");
     }
-    restaurant.primaryAddressId = data.primaryAddressId;
+    restaurant.primaryAddressId = primaryAddressId;
   }
 
   const needsVerification = RESTAURANT_VERIFICATION_FIELDS.some(
@@ -140,28 +149,12 @@ export const updateRestaurant = async (
     restaurant.isVerified = false;
   }
 
-  if (data.description !== undefined) {
-    restaurant.description = data.description;
+  if (cuisineIds !== undefined) {
+    restaurant.cuisineIds = cuisineIds.map((id) => new Types.ObjectId(id));
   }
 
-  if (data.restaurantType !== undefined) {
-    restaurant.restaurantType = data.restaurantType;
-  }
-
-  if (data.cuisineIds !== undefined) {
-    restaurant.cuisineIds = data.cuisineIds.map((id) => new Types.ObjectId(id));
-  }
-
-  if (data.minimumOrderAmount !== undefined) {
-    restaurant.minimumOrderAmount = data.minimumOrderAmount;
-  }
-
-  if (data.deliveryRadius !== undefined) {
-    restaurant.deliveryRadius = data.deliveryRadius;
-  }
-
-  if (data.averagePreparationTime !== undefined) {
-    restaurant.averagePreparationTime = data.averagePreparationTime;
+  if (Object.keys(updateFields).length > 0) {
+    restaurant.set(updateFields);
   }
 
   await restaurant.save();
