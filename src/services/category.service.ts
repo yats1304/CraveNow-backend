@@ -1,5 +1,5 @@
 import { CLOUDINARY_FOLDERS } from "../constants/cloudinary.constants.js";
-import { Category, Restaurant } from "../models/index.js";
+import { Category, MenuItem, Restaurant } from "../models/index.js";
 import {
   CreateCategoryDto,
   GetAllCategoriesDto,
@@ -351,17 +351,17 @@ export const deleteCategory = async (userId: string, categoryId: string) => {
     throw new ErrorHandler(404, "Category not found.");
   }
 
-  //   const menuItemExists = await MenuItem.exists({
-  //     categoryId,
-  //     restaurantId: restaurant._id,
-  //   });
+  const menuItemExists = await MenuItem.exists({
+    categoryId,
+    restaurantId: restaurant._id,
+  });
 
-  //   if (menuItemExists) {
-  //     throw new ErrorHandler(
-  //       409,
-  //       "Cannot delete category because it contains menu items.",
-  //     );
-  //   }
+  if (menuItemExists) {
+    throw new ErrorHandler(
+      409,
+      "Cannot delete category because it contains menu items.",
+    );
+  }
 
   if (category.image?.publicId) {
     await deleteImage(category.image.publicId);

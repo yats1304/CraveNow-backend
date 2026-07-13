@@ -1,5 +1,3 @@
-import { Types } from "mongoose";
-
 export interface CreateCategoryDto {
   name: string;
   description?: string;

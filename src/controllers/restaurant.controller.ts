@@ -1,6 +1,5 @@
 import { TryCatch } from "../utils/index.js";
 import * as restaurantService from "../services/index.js";
-import { User } from "../models/index.js";
 
 export const createRestaurant = TryCatch(async (req, res) => {
   const { userId } = req.user!;

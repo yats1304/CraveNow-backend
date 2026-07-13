@@ -4,3 +4,4 @@ export * from "./restaurant.service.js";
 export * from "./cloudinary.service.js";
 export * from "./cuisine.service.js";
 export * from "./category.service.js";
+export * from "./menuItems.service.js";
