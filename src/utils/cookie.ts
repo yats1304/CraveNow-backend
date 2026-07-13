@@ -11,7 +11,7 @@ export const setAuthCookies = (
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? "none" : "lax",
-    maxAge: 24 * 60 * 1000 /* for dev purpose accessToken expiry is 24 hrs */,
+    maxAge: 24 * 60 * 60 * 1000 /* for dev purpose accessToken expiry is 24 hrs */,
   });
 
   res.cookie("refreshToken", refreshToken, {

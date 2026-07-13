@@ -11,7 +11,7 @@ import {
   resendOtpSchema,
   resetPasswordSchema,
   verifyOtpSchema,
-} from "../validators/auth.validation.js";
+} from "../validators/auth.validatior.js";
 import { isAuth } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
