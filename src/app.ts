@@ -7,6 +7,7 @@ import restaurantRoutes from "./routes/restaurant.routes.js";
 import cuisineRoutes from "./routes/cuisine.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import menuItemRoutes from "./routes/menuItems.routes.js";
+import cartRoutes from "./routes/cart.routes.js";
 import { globalErrorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
@@ -23,6 +24,7 @@ app.use("/api/v1/restaurant", restaurantRoutes);
 app.use("/api/v1/cuisine", cuisineRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/menu-item", menuItemRoutes);
+app.use("/api/v1/cart", cartRoutes);
 
 // global error handler
 app.use(globalErrorHandler);

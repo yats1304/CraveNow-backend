@@ -3,3 +3,5 @@ export * from "./address.interface.js";
 export * from "./restaurant.interface.js";
 export * from "./cuisine.interface.js";
 export * from "./category.interface.js";
+export * from "./cart.interface.js";
+export * from "./cartItem.interface.js";

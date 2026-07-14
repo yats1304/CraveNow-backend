@@ -7,4 +7,6 @@ export * from "./restaurant.types.js";
 export * from "./cuisine.types.js";
 export * from "./category.types.js";
 export * from "./menuItems.types.js";
+export * from "./cart.types.js";
+
 

@@ -5,5 +5,7 @@ export * from "./restaurant.validator.js";
 export * from "./cuisine.validator.js";
 export * from "./category.validator.js";
 export * from "./menuItems.validator.js";
+export * from "./cart.validator.js";
+
 
 

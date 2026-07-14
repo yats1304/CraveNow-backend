@@ -18,6 +18,7 @@ export interface IMenuItem extends Document {
   isFeatured: boolean;
   totalOrders: number;
   isDeleted: boolean;
+  finalPrice: number;
   createdAt: Date;
   updatedAt: Date;
 }

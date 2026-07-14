@@ -3,3 +3,4 @@ export * from "./address.model.js";
 export * from "./restaurant.model.js";
 export * from "./category.model.js";
 export * from "./menuItems.model.js";
+export * from "./cart.model.js";
