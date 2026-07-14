@@ -5,3 +5,6 @@ export * from "./cuisine.interface.js";
 export * from "./category.interface.js";
 export * from "./cart.interface.js";
 export * from "./cartItem.interface.js";
+export * from "./orderItem.interface.js";
+export * from "./order.interface.js";
+export * from "./counter.interface.js";

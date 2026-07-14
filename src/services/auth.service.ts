@@ -36,7 +36,7 @@ import {
 } from "../utils/index.js";
 import { forgotPasswordTemplate } from "../templates/forgot-password.template.js";
 import { verifyGoogleIdToken } from "../utils/google.js";
-import { createUserSession } from "../helper/index.js";
+import { createUserSession } from "../helpers/index.js";
 
 export const registerUser = async (registerData: RegisterUserDto) => {
   const { name, email, password, phone, role } = registerData;

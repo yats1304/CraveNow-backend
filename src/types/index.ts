@@ -8,5 +8,6 @@ export * from "./cuisine.types.js";
 export * from "./category.types.js";
 export * from "./menuItems.types.js";
 export * from "./cart.types.js";
-
-
+export * from "./order.types.js";
+export * from "./payment.types.js";
+export * from "./counter.types.js";
