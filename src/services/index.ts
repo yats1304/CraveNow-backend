@@ -8,3 +8,4 @@ export * from "./menuItems.service.js";
 export * from "./cart.service.js";
 export * from "./order.service.js";
 export * from "./payment.service.js";
+export * from "./deliveryPartner.service.js";

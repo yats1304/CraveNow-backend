@@ -9,3 +9,4 @@ export * from "./orderItem.interface.js";
 export * from "./order.interface.js";
 export * from "./counter.interface.js";
 export * from "./payment.interface.js";
+export * from "./deliveryPartner.interface.js";

@@ -6,3 +6,4 @@ export * from "./menuItems.model.js";
 export * from "./cart.model.js";
 export * from "./counter.model.js";
 export * from "./payment.model.js";
+export * from "./deliveryPartner.model.js";

@@ -5,5 +5,5 @@ export const CLOUDINARY_FOLDERS = {
   MENU_ITEMS: "cravenow/menu-items",
   CATEGORY: "cravenow/categories",
   CUISINE: "cravenow/cuisines",
-  DELIVERY_RIDER: "cravenow/delivery-riders",
+  DELIVERY_PARTNER: "cravenow/delivery-riders",
 } as const;

@@ -12,7 +12,10 @@ export const loggerMiddleware = pinoHttp({
     req: (req) => ({
       method: req.method,
       url: req.url,
-      ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress,
+      ip:
+        req.headers["x-forwarded-for"] ||
+        req.socket?.remoteAddress ||
+        (req as any).connection?.remoteAddress,
     }),
     res: (res) => ({
       statusCode: res.statusCode,

@@ -11,3 +11,4 @@ export * from "./cart.types.js";
 export * from "./order.types.js";
 export * from "./payment.types.js";
 export * from "./counter.types.js";
+export * from "./deliveryPartner.types.js";

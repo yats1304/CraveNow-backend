@@ -15,7 +15,7 @@ export enum OrderCancelledBy {
   CUSTOMER = "CUSTOMER",
   RESTAURANT = "RESTAURANT",
   ADMIN = "ADMIN",
-  DELIVERY_RIDER = "DELIVERY_RIDER",
+  DELIVERY_PARTNER = "DELIVERY_PARTNER",
 }
 
 export interface CreateOrderDto {

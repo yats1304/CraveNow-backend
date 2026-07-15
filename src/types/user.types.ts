@@ -2,7 +2,7 @@ export enum UserRole {
   CUSTOMER = "CUSTOMER",
   RESTAURANT = "RESTAURANT",
   ADMIN = "ADMIN",
-  DELIVERY_RIDER = "DELIVERY_RIDER",
+  DELIVERY_PARTNER = "DELIVERY_PARTNER",
 }
 
 export enum AuthProvider {

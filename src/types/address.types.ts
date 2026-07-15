@@ -3,7 +3,7 @@ import { UserRole } from "./user.types.js";
 export enum AddressOwnerTypes {
   USER = "USER",
   RESTAURANT = "RESTAURANT",
-  DELIVERY_RIDER = "DELIVERY_RIDER",
+  DELIVERY_PARTNER = "DELIVERY_PARTNER",
 }
 
 export enum AddressLabel {
@@ -16,7 +16,7 @@ export enum AddressLabel {
 export const OWNER_TYPE_MAP: Record<string, AddressOwnerTypes> = {
   [UserRole.CUSTOMER]: AddressOwnerTypes.USER,
   [UserRole.RESTAURANT]: AddressOwnerTypes.RESTAURANT,
-  [UserRole.DELIVERY_RIDER]: AddressOwnerTypes.DELIVERY_RIDER,
+  [UserRole.DELIVERY_PARTNER]: AddressOwnerTypes.DELIVERY_PARTNER,
   [UserRole.ADMIN]: AddressOwnerTypes.USER,
 };
 
