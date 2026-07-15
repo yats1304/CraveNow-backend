@@ -1,6 +1,7 @@
 import { PaymentMethod } from "./payment.types.js";
 
 export enum OrderStatus {
+  AWAITING_PAYMENT = "AWAITING_PAYMENT",
   PENDING = "PENDING",
   ACCEPTED = "ACCEPTED",
   PREPARING = "PREPARING",

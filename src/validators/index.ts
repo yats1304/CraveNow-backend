@@ -7,3 +7,4 @@ export * from "./category.validator.js";
 export * from "./menuItems.validator.js";
 export * from "./cart.validator.js";
 export * from "./order.validator.js";
+export * from "./payment.validator.js";

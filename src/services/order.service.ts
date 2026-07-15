@@ -5,6 +5,7 @@ import {
   CreateOrderDto,
   OrderCancelledBy,
   OrderStatus,
+  PaymentMethod,
   PaymentStatus,
   RestaurantStatus,
   UpdateRestaurantOrderStatusDto,
@@ -83,6 +84,10 @@ export const createOrder = async (userId: string, data: CreateOrderDto) => {
           addressId: address._id,
 
           paymentMethod: data.paymentMethod,
+          status:
+            data.paymentMethod === PaymentMethod.COD
+              ? OrderStatus.PENDING
+              : OrderStatus.AWAITING_PAYMENT,
 
           subtotal: cart.subtotal,
           discount: cart.discount,
@@ -203,7 +208,13 @@ export const cancelOrder = async (
     throw new ErrorHandler(404, "Order not found.");
   }
 
-  if (![OrderStatus.PENDING, OrderStatus.ACCEPTED].includes(order.status)) {
+  if (
+    ![
+      OrderStatus.AWAITING_PAYMENT,
+      OrderStatus.PENDING,
+      OrderStatus.ACCEPTED,
+    ].includes(order.status)
+  ) {
     throw new ErrorHandler(400, "This order can no longer be cancelled.");
   }
 
@@ -233,6 +244,7 @@ export const getRestaurantOrders = async (userId: string) => {
 
   const orders = await Order.find({
     restaurantId: restaurant._id,
+    status: { $ne: OrderStatus.AWAITING_PAYMENT },
   })
     .sort({
       createdAt: -1,
@@ -297,6 +309,10 @@ export const updateRestaurantUpdateStatus = async (
     throw new ErrorHandler(404, "Order not found.");
   }
 
+  if (order.status === OrderStatus.AWAITING_PAYMENT) {
+    throw new ErrorHandler(400, "Waiting for customer payment.");
+  }
+
   if (order.status === OrderStatus.CANCELLED) {
     throw new ErrorHandler(400, "Cancelled orders cannot be updated.");
   }
@@ -316,3 +332,38 @@ export const updateRestaurantUpdateStatus = async (
 
   return await buildOrderResponse(order._id.toString());
 };
+
+// export const handleOrderPaymentSuccess = async (orderId: string) => {
+//   const session = await mongoose.startSession();
+
+//   try {
+//     session.startTransaction();
+
+//     const order = await Order.findOne({ _id: orderId }, null, { session });
+
+//     if (!order) {
+//       throw new ErrorHandler(404, "Order not found.");
+//     }
+
+//     if (order.status !== OrderStatus.AWAITING_PAYMENT) {
+//       throw new ErrorHandler(
+//         400,
+//         `Cannot process payment for order in ${order.status} state.`,
+//       );
+//     }
+
+//     order.status = OrderStatus.PENDING;
+//     order.paymentStatus = PaymentStatus.PAID;
+
+//     await order.save({ session });
+
+//     await session.commitTransaction();
+
+//     return await buildOrderResponse(order._id.toString());
+//   } catch (error) {
+//     await session.abortTransaction();
+//     throw error;
+//   } finally {
+//     await session.endSession();
+//   }
+// };

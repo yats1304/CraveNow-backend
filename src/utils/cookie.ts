@@ -1,6 +1,7 @@
+import { env } from "../config/env.js";
 import { Response } from "express";
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = env.NODE_ENV === "production";
 
 export const setAuthCookies = (
   res: Response,

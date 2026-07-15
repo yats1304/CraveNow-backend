@@ -8,3 +8,4 @@ export * from "./cartItem.schema.js";
 export * from "./order.schema.js";
 export * from "./orderItem.schema.js";
 export * from "./counter.schema.js";
+export * from "./payment.schema.js";

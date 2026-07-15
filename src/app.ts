@@ -9,12 +9,14 @@ import categoryRoutes from "./routes/category.routes.js";
 import menuItemRoutes from "./routes/menuItems.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 import orderRoutes from "./routes/order.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
 import { globalErrorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
 // middlewares
 app.use(cors());
+app.use("/api/v1/payment/webhook", express.raw({ type: "application/json" }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -27,6 +29,7 @@ app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/menu-item", menuItemRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/order", orderRoutes);
+app.use("/api/v1/payment", paymentRoutes);
 
 // global error handler
 app.use(globalErrorHandler);

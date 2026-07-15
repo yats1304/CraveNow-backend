@@ -8,3 +8,4 @@ export * from "./cartItem.interface.js";
 export * from "./orderItem.interface.js";
 export * from "./order.interface.js";
 export * from "./counter.interface.js";
+export * from "./payment.interface.js";
