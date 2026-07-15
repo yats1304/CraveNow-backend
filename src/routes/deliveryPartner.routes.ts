@@ -1,5 +1,6 @@
 import express from "express";
 import * as deliveryPartnerController from "../controllers/index.js";
+import * as riderLocationController from "../controllers/riderLocation.controller.js";
 import { isAuth } from "../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../middlewares/authorizeRoles.middleware.js";
 import { UserRole } from "../types/user.types.js";
@@ -9,6 +10,7 @@ import {
   updateDeliveryPartnerSchema,
 } from "../validators/deliveryPartner.validator.js";
 import { validate } from "../middlewares/validate.middleware.js";
+import { updateLocationSchema } from "../validators/riderLocation.validator.js";
 
 const router = express.Router();
 
@@ -42,6 +44,14 @@ router.patch(
   authorizeRoles(UserRole.DELIVERY_PARTNER),
   validate(updateAvailabilitySchema),
   deliveryPartnerController.updateAvailability,
+);
+
+router.patch(
+  "/location",
+  isAuth,
+  authorizeRoles(UserRole.DELIVERY_PARTNER),
+  validate(updateLocationSchema),
+  riderLocationController.updateLocation,
 );
 
 // Upto this

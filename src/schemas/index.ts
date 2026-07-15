@@ -10,3 +10,4 @@ export * from "./orderItem.schema.js";
 export * from "./counter.schema.js";
 export * from "./payment.schema.js";
 export * from "./deliveryPartner.schema.js";
+export * from "./riderLocation.schema.js";

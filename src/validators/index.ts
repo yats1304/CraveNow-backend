@@ -9,3 +9,4 @@ export * from "./cart.validator.js";
 export * from "./order.validator.js";
 export * from "./payment.validator.js";
 export * from "./deliveryPartner.validator.js";
+export * from "./riderLocation.validator.js";
