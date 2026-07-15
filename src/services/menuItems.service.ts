@@ -1,7 +1,9 @@
+import { Types } from "mongoose";
 import {
   CLOUDINARY_FOLDERS,
   MAX_MENU_ITEM_IMAGES,
 } from "../constants/index.js";
+import { logger } from "../config/logger.js";
 import { Category, MenuItem, Restaurant } from "../models/index.js";
 import {
   CreateMenuItemDto,
@@ -85,6 +87,12 @@ export const createMenuItem = async (
     preparationTime,
     isFeatured,
   });
+
+  logger.info({
+    menuItemId: menuItem._id.toString(),
+    restaurantId: restaurant._id.toString(),
+    name: menuItem.name,
+  }, "Menu item created");
 
   return {
     success: true,
@@ -274,7 +282,13 @@ export const updateMenuItem = async (
     menuItem.set(updateFields);
   }
 
+  logger.info({
+    menuItemId: menuItem._id.toString(),
+    restaurantId: restaurant._id.toString(),
+  }, "Menu item updated");
+
   await menuItem.save();
+
 
   return {
     success: true,
@@ -439,7 +453,13 @@ export const deleteMenuItem = async (userId: string, menuItemId: string) => {
   menuItem.isDeleted = true;
   menuItem.isAvailable = false;
 
+  logger.info({
+    menuItemId: menuItem._id.toString(),
+    restaurantId: restaurant._id.toString(),
+  }, "Menu item deleted");
+
   await menuItem.save();
+
 
   return {
     success: true,

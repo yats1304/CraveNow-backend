@@ -53,4 +53,5 @@ export const env = {
   RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET!,
   RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET!,
   NODE_ENV: process.env.NODE_ENV || "development",
+  LOG_LEVEL: process.env.LOG_LEVEL || "info",
 };

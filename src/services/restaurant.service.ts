@@ -12,6 +12,7 @@ import {
 } from "../types/index.js";
 import { ErrorHandler } from "../utils/index.js";
 import { replaceImage } from "./cloudinary.service.js";
+import { logger } from "../config/logger.js";
 
 export const createRestaurant = async (
   userId: string,
@@ -51,6 +52,12 @@ export const createRestaurant = async (
     isVerified: false,
     isOpen: false,
   });
+
+  logger.info({
+    restaurantId: restaurant._id.toString(),
+    ownerId: userId,
+    name: restaurant.name,
+  }, "Restaurant created");
 
   return {
     success: true,
@@ -156,6 +163,13 @@ export const updateRestaurant = async (
   if (Object.keys(updateFields).length > 0) {
     restaurant.set(updateFields);
   }
+
+  logger.info({
+    restaurantId: restaurant._id.toString(),
+    ownerId: userId,
+    status: restaurant.status,
+    isVerified: restaurant.isVerified,
+  }, "Restaurant updated");
 
   await restaurant.save();
 

@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { logger } from "../config/logger.js";
+
 import { Address, Cart, Restaurant } from "../models/index.js";
 import {
   CancelOrderDto,
@@ -148,6 +150,14 @@ export const createOrder = async (userId: string, data: CreateOrderDto) => {
 
     await session.commitTransaction();
 
+    logger.info({
+      orderId: order._id.toString(),
+      userId,
+      restaurantId: order.restaurantId.toString(),
+      total: order.total,
+    }, "Order created");
+
+
     return {
       success: true,
       message: "Order placed successfully.",
@@ -227,6 +237,13 @@ export const cancelOrder = async (
   //   if (order.paymentStatus === PaymentStatus.PAID) {
   //     // Trigger refund workflow here
   //   }
+
+  logger.info({
+    orderId: order._id.toString(),
+    userId,
+    cancelledBy: role,
+    reason: data.reason,
+  }, "Order cancelled");
 
   await order.save();
 
@@ -326,7 +343,15 @@ export const updateRestaurantUpdateStatus = async (
     );
   }
 
+  const oldStatus = order.status;
   order.status = data.status;
+
+  logger.info({
+    orderId: order._id.toString(),
+    restaurantId: restaurant._id.toString(),
+    previousStatus: oldStatus,
+    newStatus: data.status,
+  }, "Order status updated");
 
   await order.save();
 

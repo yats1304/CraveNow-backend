@@ -11,11 +11,13 @@ import cartRoutes from "./routes/cart.routes.js";
 import orderRoutes from "./routes/order.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
 import { globalErrorHandler } from "./middlewares/error.middleware.js";
+import { loggerMiddleware } from "./middlewares/logger.middleware.js";
 
 const app = express();
 
 // middlewares
 app.use(cors());
+app.use(loggerMiddleware);
 app.use("/api/v1/payment/webhook", express.raw({ type: "application/json" }));
 app.use(express.json());
 app.use(cookieParser());

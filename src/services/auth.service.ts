@@ -37,6 +37,7 @@ import {
 import { forgotPasswordTemplate } from "../templates/forgot-password.template.js";
 import { verifyGoogleIdToken } from "../utils/google.js";
 import { createUserSession } from "../helpers/index.js";
+import { logger } from "../config/logger.js";
 
 export const registerUser = async (registerData: RegisterUserDto) => {
   const { name, email, password, phone, role } = registerData;
@@ -122,6 +123,12 @@ export const verifyOtp = async (otpData: VerifyOtpDto) => {
     role: data.role,
   });
 
+  logger.info({
+    userId: user._id.toString(),
+    email: user.email,
+    role: user.role,
+  }, "User registered");
+
   await redisClient.del(registerKey);
 
   const { accessToken, refreshToken } = await createUserSession({
@@ -129,6 +136,12 @@ export const verifyOtp = async (otpData: VerifyOtpDto) => {
     role: user.role,
     deviceId,
   });
+
+  logger.info({
+    userId: user._id.toString(),
+    email: user.email,
+    role: user.role,
+  }, "User logged in");
 
   await sendMail({
     to: user.email,
@@ -178,6 +191,12 @@ export const login = async (loginData: LoginDto) => {
     role: user.role,
     deviceId,
   });
+
+  logger.info({
+    userId: user._id.toString(),
+    email: user.email,
+    role: user.role,
+  }, "User logged in");
 
   return {
     success: true,
@@ -479,6 +498,12 @@ export const googleLogin = async ({ idToken, deviceId }: GoogleLoginDto) => {
       googleId: googleUser.googleId,
       provider: AuthProvider.GOOGLE,
     });
+
+    logger.info({
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    }, "User registered via Google");
   }
 
   const { accessToken, refreshToken } = await createUserSession({
@@ -486,6 +511,12 @@ export const googleLogin = async ({ idToken, deviceId }: GoogleLoginDto) => {
     role: user.role,
     deviceId,
   });
+
+  logger.info({
+    userId: user._id.toString(),
+    email: user.email,
+    role: user.role,
+  }, "User logged in via Google");
 
   return {
     success: true,

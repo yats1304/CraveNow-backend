@@ -15,6 +15,8 @@ import {
 import { ErrorHandler } from "../utils/index.js";
 import { env } from "../config/env.js";
 import mongoose from "mongoose";
+import { logger } from "../config/logger.js";
+
 
 export const createPayment = async (userId: string, orderId: string) => {
   const order = await Order.findOne({
@@ -45,6 +47,13 @@ export const createPayment = async (userId: string, orderId: string) => {
     order.total,
     order.orderNumber,
   );
+
+  logger.info({
+    orderId,
+    razorpayOrderId: razorpayOrder.id,
+    amount: razorpayOrder.amount,
+  }, "Razorpay order created");
+
 
   const payment = await Payment.create({
     orderId: order._id,
@@ -112,6 +121,14 @@ export const verifyPayment = async (userId: string, data: VerifyPaymentDto) => {
       payment.status = PaymentStatus.FAILED;
       await payment.save({ session });
       await session.commitTransaction();
+
+      logger.warn({
+        userId,
+        orderId: data.orderId,
+        razorpayOrderId: data.razorpayOrderId,
+        razorpayPaymentId: data.razorpayPaymentId,
+      }, "Payment verification failed");
+
       throw new ErrorHandler(400, "Payment verification failed.");
     }
 
@@ -128,6 +145,15 @@ export const verifyPayment = async (userId: string, data: VerifyPaymentDto) => {
     await order.save({ session });
 
     await session.commitTransaction();
+
+    logger.info({
+      userId,
+      orderId: data.orderId,
+      razorpayOrderId: data.razorpayOrderId,
+      razorpayPaymentId: data.razorpayPaymentId,
+      amount: order.total,
+    }, "Payment verified successfully");
+
 
     return await buildPaymentResponse(payment._id.toString());
   } catch (error) {
@@ -177,11 +203,15 @@ export const handleWebhook = async (
   signature: string,
   payload: any,
 ) => {
+  logger.info({ event: payload.event }, "Webhook received from Razorpay");
+
   const isValid = verifyWebhookSignature(body, signature);
 
   if (!isValid) {
+    logger.warn("Invalid webhook signature received from Razorpay");
     throw new ErrorHandler(400, "Invalid webhook signature.");
   }
+
 
   const event = payload.event;
 
@@ -209,6 +239,13 @@ export const handleWebhook = async (
         status: OrderStatus.PENDING,
       });
 
+      logger.info({
+        paymentId: payment._id.toString(),
+        gatewayPaymentId: paymentEntity.id,
+        gatewayOrderId: paymentEntity.order_id,
+        amount: paymentEntity.amount,
+      }, "Payment captured via webhook");
+
       break;
     }
 
@@ -223,6 +260,12 @@ export const handleWebhook = async (
           status: PaymentStatus.FAILED,
         },
       );
+
+      logger.warn({
+        gatewayOrderId: paymentEntity.order_id,
+        gatewayPaymentId: paymentEntity.id,
+        reason: paymentEntity.error_description,
+      }, "Payment failed via webhook");
 
       break;
     }
@@ -239,6 +282,12 @@ export const handleWebhook = async (
           refundedAt: new Date(),
         },
       );
+
+      logger.info({
+        gatewayPaymentId: refund.payment_id,
+        refundId: refund.id,
+        amount: refund.amount,
+      }, "Refund processed via webhook");
 
       break;
     }

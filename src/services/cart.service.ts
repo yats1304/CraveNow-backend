@@ -3,6 +3,7 @@ import { AddToCartDto, UpdateCartItemDto } from "../types/index.js";
 import { Cart, MenuItem, Restaurant } from "../models/index.js";
 import { ErrorHandler } from "../utils/index.js";
 import { CartItem } from "../models/cartItem.model.js";
+import { logger } from "../config/logger.js";
 import {
   buildCartResponse,
   calculateCartTotals,
@@ -102,6 +103,12 @@ export const addToCart = async (userId: string, data: AddToCartDto) => {
     await cart.save({ session });
 
     await session.commitTransaction();
+
+    logger.info({
+      userId,
+      menuItemId: data.menuItemId,
+      quantity: data.quantity,
+    }, "Item added to cart");
 
     return await buildCartResponse(cart._id.toString());
   } catch (error) {
@@ -244,6 +251,11 @@ export const removeCartItem = async (userId: string, cartItemId: string) => {
 
       await session.commitTransaction();
 
+      logger.info({
+        userId,
+        cartItemId,
+      }, "Item removed from cart (cart now empty)");
+
       return emptyCartResponse();
     }
 
@@ -257,6 +269,11 @@ export const removeCartItem = async (userId: string, cartItemId: string) => {
     await cart.save({ session });
 
     await session.commitTransaction();
+
+    logger.info({
+      userId,
+      cartItemId,
+    }, "Item removed from cart");
 
     return await buildCartResponse(cart._id.toString());
   } catch (error) {
@@ -293,6 +310,10 @@ export const clearCart = async (userId: string) => {
     ]);
 
     await session.commitTransaction();
+
+    logger.info({
+      userId,
+    }, "Cart cleared");
 
     return emptyCartResponse();
   } catch (error) {
