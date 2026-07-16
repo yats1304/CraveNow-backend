@@ -16,6 +16,10 @@ export interface IDeliveryPartner extends Document {
   totalRatings: number;
   totalDeliveries: number;
   totalEarnings: number;
+  successfulDeliveries?: number;
+  cancelledDeliveries?: number;
+  acceptanceRate?: number;
+  completionRate?: number;
   createdAt: Date;
   updatedAt: Date;
 }

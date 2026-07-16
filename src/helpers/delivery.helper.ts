@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Delivery } from "../models/delivery.model.js";
 import { ErrorHandler } from "../utils/index.js";
+import { Restaurant, User } from "../models/index.js";
 
 export const buildDeliveryResponse = async (
   deliveryId: string,
@@ -134,4 +135,53 @@ export const buildRiderDeliveryResponse = async (deliveryId: string) => {
     createdAt: delivery.createdAt,
     updatedAt: delivery.updatedAt,
   };
+};
+
+export const calculateRiderEarnings = (order: any): number => {
+  // TODO: Support future payout models:
+  // - distance based
+  // - surge pricing
+  // - incentives
+  // - peak hour bonus
+  
+  // Initially: earning = fixed delivery fee
+  const baseDeliveryFee = order.deliveryFee || 40; 
+  return baseDeliveryFee;
+};
+
+export const updateRestaurantAnalytics = async (
+  restaurantId: string,
+  orderTotal: number,
+  session?: mongoose.ClientSession,
+) => {
+  await Restaurant.findByIdAndUpdate(
+    restaurantId,
+    {
+      $inc: {
+        totalCompletedOrders: 1,
+        todayCompletedOrders: 1,
+      },
+    },
+    { session },
+  );
+};
+
+export const updateCustomerAnalytics = async (
+  userId: string,
+  orderTotal: number,
+  session?: mongoose.ClientSession,
+) => {
+  const user = await User.findById(userId, null, { session });
+  if (user) {
+    const totalOrders = (user.totalOrders || 0) + 1;
+    const lifetimeSpend = (user.lifetimeSpend || 0) + orderTotal;
+    const averageOrderValue = totalOrders > 0 ? lifetimeSpend / totalOrders : 0;
+
+    user.totalOrders = totalOrders;
+    user.lastOrderDate = new Date();
+    user.lifetimeSpend = lifetimeSpend;
+    user.averageOrderValue = averageOrderValue;
+
+    await user.save({ session });
+  }
 };

@@ -106,6 +106,14 @@ export const restaurantSchema = new Schema<IRestaurant>(
       enum: Object.values(RestaurantStatus),
       default: RestaurantStatus.PENDING,
     },
+    totalCompletedOrders: {
+      type: Number,
+      default: 0,
+    },
+    todayCompletedOrders: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

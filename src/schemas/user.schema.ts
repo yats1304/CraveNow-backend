@@ -53,8 +53,23 @@ export const userSchema = new Schema<IUser>(
       default: AccountStatus.ACTIVE,
     },
 
-    refreshToken: {
+     refreshToken: {
       type: String,
+    },
+    totalOrders: {
+      type: Number,
+      default: 0,
+    },
+    lastOrderDate: {
+      type: Date,
+    },
+    lifetimeSpend: {
+      type: Number,
+      default: 0,
+    },
+    averageOrderValue: {
+      type: Number,
+      default: 0,
     },
   },
   {

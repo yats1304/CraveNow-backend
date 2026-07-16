@@ -12,6 +12,10 @@ export interface IUser extends Document {
   role: UserRole;
   status: AccountStatus;
   refreshToken?: string;
+  totalOrders?: number;
+  lastOrderDate?: Date;
+  lifetimeSpend?: number;
+  averageOrderValue?: number;
   createdAt: Date;
   updatedAt: Date;
 }

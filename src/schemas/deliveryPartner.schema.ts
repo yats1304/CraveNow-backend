@@ -76,6 +76,26 @@ export const deliveryPartnerSchema = new Schema<IDeliveryPartner>(
       default: 0,
       min: 0,
     },
+    successfulDeliveries: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    cancelledDeliveries: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    acceptanceRate: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    completionRate: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,

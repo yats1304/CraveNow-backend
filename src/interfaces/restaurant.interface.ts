@@ -21,6 +21,8 @@ export interface IRestaurant extends Document {
   isOpen: boolean;
   isVerified: boolean;
   status: RestaurantStatus;
+  totalCompletedOrders?: number;
+  todayCompletedOrders?: number;
   createdAt: Date;
   updatedAt: Date;
 }
