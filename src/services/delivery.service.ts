@@ -22,6 +22,11 @@ import {
   updateCustomerAnalytics,
 } from "../helpers/delivery.helper.js";
 import { DELIVERY_STATUS_FLOW } from "../constants/delivery.constants.js";
+import {
+  emitRiderAssigned,
+  emitDeliveryUpdated,
+  emitDeliveryCompleted,
+} from "../socket/emitters.js";
 
 // --- Private Reusable Helpers ---
 
@@ -29,7 +34,9 @@ const getDeliveryPartnerByUser = async (
   userId: string,
   session?: mongoose.ClientSession,
 ) => {
-  const deliveryPartner = await DeliveryPartner.findOne({ userId }, null, { session });
+  const deliveryPartner = await DeliveryPartner.findOne({ userId }, null, {
+    session,
+  });
   if (!deliveryPartner) {
     throw new ErrorHandler(404, "Delivery partner not found.");
   }
@@ -100,8 +107,6 @@ const updateDeliveryStatus = async (
   await delivery.save({ session });
   return delivery;
 };
-
-
 
 // --- Public Service APIs ---
 
@@ -195,6 +200,17 @@ export const assignRider = async (
 
     await session.commitTransaction();
 
+    try {
+      emitRiderAssigned(deliveryPartnerId, delivery[0]._id.toString(), orderId);
+    } catch (error) {
+      logger.error(
+        { error, deliveryPartnerId, orderId },
+        "Failed to emit emitRiderAssigned socket event",
+      );
+    }
+
+    // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Rider Assigned
+
     logger.info(
       {
         deliveryId: delivery[0]._id.toString(),
@@ -203,9 +219,6 @@ export const assignRider = async (
       },
       "Delivery Assigned",
     );
-
-    // TODO: Socket.IO - Notify rider of the new assignment
-    // TODO: Socket.IO - Notify admin
 
     return await buildDeliveryResponse(delivery[0]._id.toString(), session);
   } catch (error) {
@@ -250,13 +263,32 @@ export const acceptDelivery = async (userId: string, deliveryId: string) => {
     session.startTransaction();
 
     const deliveryPartner = await getDeliveryPartnerByUser(userId, session);
-    const delivery = await getDeliveryForRider(deliveryId, deliveryPartner._id, session);
+    const delivery = await getDeliveryForRider(
+      deliveryId,
+      deliveryPartner._id,
+      session,
+    );
 
     validateDeliveryTransition(delivery.status, DeliveryStatus.ACCEPTED);
 
     await updateDeliveryStatus(delivery, DeliveryStatus.ACCEPTED, session);
 
     await session.commitTransaction();
+
+    try {
+      emitDeliveryUpdated(
+        deliveryPartner._id.toString(),
+        delivery._id.toString(),
+        DeliveryStatus.ACCEPTED,
+      );
+    } catch (error) {
+      logger.error(
+        { error, deliveryId: delivery._id },
+        "Failed to emit emitDeliveryUpdated socket event (ACCEPTED)",
+      );
+    }
+
+    // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Delivery Accepted
 
     logger.info(
       {
@@ -266,10 +298,6 @@ export const acceptDelivery = async (userId: string, deliveryId: string) => {
       },
       "Delivery Accepted",
     );
-
-    // TODO: Socket.IO - Notify customer
-    // TODO: Socket.IO - Notify restaurant
-    // TODO: Socket.IO - Notify admin
 
     return await buildRiderDeliveryResponse(delivery._id.toString());
   } catch (error) {
@@ -287,13 +315,36 @@ export const reachPickup = async (userId: string, deliveryId: string) => {
     session.startTransaction();
 
     const deliveryPartner = await getDeliveryPartnerByUser(userId, session);
-    const delivery = await getDeliveryForRider(deliveryId, deliveryPartner._id, session);
+    const delivery = await getDeliveryForRider(
+      deliveryId,
+      deliveryPartner._id,
+      session,
+    );
 
     validateDeliveryTransition(delivery.status, DeliveryStatus.REACHED_PICKUP);
 
-    await updateDeliveryStatus(delivery, DeliveryStatus.REACHED_PICKUP, session);
+    await updateDeliveryStatus(
+      delivery,
+      DeliveryStatus.REACHED_PICKUP,
+      session,
+    );
 
     await session.commitTransaction();
+
+    try {
+      emitDeliveryUpdated(
+        deliveryPartner._id.toString(),
+        delivery._id.toString(),
+        DeliveryStatus.REACHED_PICKUP,
+      );
+    } catch (error) {
+      logger.error(
+        { error, deliveryId: delivery._id },
+        "Failed to emit emitDeliveryUpdated socket event (REACHED_PICKUP)",
+      );
+    }
+
+    // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Reached Pickup
 
     logger.info(
       {
@@ -303,9 +354,6 @@ export const reachPickup = async (userId: string, deliveryId: string) => {
       },
       "Reached Pickup",
     );
-
-    // TODO: Socket.IO - Notify customer
-    // TODO: Socket.IO - Notify restaurant
 
     return await buildRiderDeliveryResponse(delivery._id.toString());
   } catch (error) {
@@ -323,13 +371,32 @@ export const pickUpOrder = async (userId: string, deliveryId: string) => {
     session.startTransaction();
 
     const deliveryPartner = await getDeliveryPartnerByUser(userId, session);
-    const delivery = await getDeliveryForRider(deliveryId, deliveryPartner._id, session);
+    const delivery = await getDeliveryForRider(
+      deliveryId,
+      deliveryPartner._id,
+      session,
+    );
 
     validateDeliveryTransition(delivery.status, DeliveryStatus.PICKED_UP);
 
     await updateDeliveryStatus(delivery, DeliveryStatus.PICKED_UP, session);
 
     await session.commitTransaction();
+
+    try {
+      emitDeliveryUpdated(
+        deliveryPartner._id.toString(),
+        delivery._id.toString(),
+        DeliveryStatus.PICKED_UP,
+      );
+    } catch (error) {
+      logger.error(
+        { error, deliveryId: delivery._id },
+        "Failed to emit emitDeliveryUpdated socket event (PICKED_UP)",
+      );
+    }
+
+    // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Picked Up
 
     logger.info(
       {
@@ -339,9 +406,6 @@ export const pickUpOrder = async (userId: string, deliveryId: string) => {
       },
       "Picked Up",
     );
-
-    // TODO: Socket.IO - Notify customer
-    // TODO: Socket.IO - Notify restaurant
 
     return await buildRiderDeliveryResponse(delivery._id.toString());
   } catch (error) {
@@ -359,11 +423,22 @@ export const outForDelivery = async (userId: string, deliveryId: string) => {
     session.startTransaction();
 
     const deliveryPartner = await getDeliveryPartnerByUser(userId, session);
-    const delivery = await getDeliveryForRider(deliveryId, deliveryPartner._id, session);
+    const delivery = await getDeliveryForRider(
+      deliveryId,
+      deliveryPartner._id,
+      session,
+    );
 
-    validateDeliveryTransition(delivery.status, DeliveryStatus.OUT_FOR_DELIVERY);
+    validateDeliveryTransition(
+      delivery.status,
+      DeliveryStatus.OUT_FOR_DELIVERY,
+    );
 
-    await updateDeliveryStatus(delivery, DeliveryStatus.OUT_FOR_DELIVERY, session);
+    await updateDeliveryStatus(
+      delivery,
+      DeliveryStatus.OUT_FOR_DELIVERY,
+      session,
+    );
 
     // Update corresponding Order status
     await Order.findByIdAndUpdate(
@@ -374,6 +449,21 @@ export const outForDelivery = async (userId: string, deliveryId: string) => {
 
     await session.commitTransaction();
 
+    try {
+      emitDeliveryUpdated(
+        deliveryPartner._id.toString(),
+        delivery._id.toString(),
+        DeliveryStatus.OUT_FOR_DELIVERY,
+      );
+    } catch (error) {
+      logger.error(
+        { error, deliveryId: delivery._id },
+        "Failed to emit emitDeliveryUpdated socket event (OUT_FOR_DELIVERY)",
+      );
+    }
+
+    // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Out For Delivery
+
     logger.info(
       {
         deliveryId: delivery._id.toString(),
@@ -382,9 +472,6 @@ export const outForDelivery = async (userId: string, deliveryId: string) => {
       },
       "Out For Delivery",
     );
-
-    // TODO: Socket.IO - Notify customer
-    // TODO: Socket.IO - Notify restaurant
 
     return await buildRiderDeliveryResponse(delivery._id.toString());
   } catch (error) {
@@ -402,7 +489,11 @@ export const deliverOrder = async (userId: string, deliveryId: string) => {
     session.startTransaction();
 
     const deliveryPartner = await getDeliveryPartnerByUser(userId, session);
-    const delivery = await getDeliveryForRider(deliveryId, deliveryPartner._id, session);
+    const delivery = await getDeliveryForRider(
+      deliveryId,
+      deliveryPartner._id,
+      session,
+    );
 
     validateDeliveryTransition(delivery.status, DeliveryStatus.DELIVERED);
 
@@ -413,7 +504,10 @@ export const deliverOrder = async (userId: string, deliveryId: string) => {
 
     // 7. Payment Validation
     // ONLINE payment method must already be PAID.
-    if (order.paymentMethod !== PaymentMethod.COD && order.paymentStatus !== PaymentStatus.PAID) {
+    if (
+      order.paymentMethod !== PaymentMethod.COD &&
+      order.paymentStatus !== PaymentStatus.PAID
+    ) {
       throw new ErrorHandler(400, "Payment has not been completed.");
     }
 
@@ -428,11 +522,14 @@ export const deliverOrder = async (userId: string, deliveryId: string) => {
 
     // 2. Rider Earnings
     const earning = calculateRiderEarnings(order);
-    deliveryPartner.totalEarnings = (deliveryPartner.totalEarnings || 0) + earning;
+    deliveryPartner.totalEarnings =
+      (deliveryPartner.totalEarnings || 0) + earning;
 
     // 3. Rider Statistics
-    deliveryPartner.totalDeliveries = (deliveryPartner.totalDeliveries || 0) + 1;
-    deliveryPartner.successfulDeliveries = (deliveryPartner.successfulDeliveries || 0) + 1;
+    deliveryPartner.totalDeliveries =
+      (deliveryPartner.totalDeliveries || 0) + 1;
+    deliveryPartner.successfulDeliveries =
+      (deliveryPartner.successfulDeliveries || 0) + 1;
     // Future-proof statistics updates:
     // TODO: Increment cancelledDeliveries if delivery is cancelled.
     // TODO: Update acceptanceRate based on accepted vs. assigned offers.
@@ -442,15 +539,37 @@ export const deliverOrder = async (userId: string, deliveryId: string) => {
     await deliveryPartner.save({ session });
 
     // 4. Restaurant Analytics
-    await updateRestaurantAnalytics(order.restaurantId.toString(), order.total, session);
+    await updateRestaurantAnalytics(
+      order.restaurantId.toString(),
+      order.total,
+      session,
+    );
 
     // 5. Customer Analytics
-    await updateCustomerAnalytics(order.userId.toString(), order.total, session);
+    await updateCustomerAnalytics(
+      order.userId.toString(),
+      order.total,
+      session,
+    );
 
     // 6. Assignment History
     // TODO: Mark assignment as COMPLETED in AssignmentHistory module when implemented.
 
     await session.commitTransaction();
+
+    try {
+      emitDeliveryCompleted(
+        delivery.orderId.toString(),
+        delivery._id.toString(),
+      );
+    } catch (error) {
+      logger.error(
+        { error, deliveryId: delivery._id },
+        "Failed to emit emitDeliveryCompleted socket event",
+      );
+    }
+
+    // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Delivery Completed
 
     logger.info(
       {
@@ -461,19 +580,6 @@ export const deliverOrder = async (userId: string, deliveryId: string) => {
       },
       "Delivered",
     );
-
-    // 10. Socket.IO TODOs
-    // TODO: Notify customer
-    // TODO: Notify restaurant
-    // TODO: Notify admin
-    // TODO: Notify rider
-
-    // 11. BullMQ TODOs
-    // TODO: Generate invoice
-    // TODO: Send rating notification
-    // TODO: Release promotions
-    // TODO: Loyalty points
-    // TODO: Delivery completed event
 
     return await buildRiderDeliveryResponse(delivery._id.toString());
   } catch (error) {

@@ -8,7 +8,6 @@ import {
   OrderCancelledBy,
   OrderStatus,
   PaymentMethod,
-  PaymentStatus,
   RestaurantStatus,
   UpdateRestaurantOrderStatusDto,
 } from "../types/index.js";
@@ -18,6 +17,13 @@ import { buildOrderResponse, generateOrderNumber } from "../helpers/index.js";
 import { OrderItem } from "../models/orderItem.model.js";
 import { Order } from "../models/order.model.js";
 import { ORDER_STATUS_FLOW } from "../constants/order.constants.js";
+import {
+  emitNewOrder,
+  emitOrderCreated,
+  emitOrderAccepted,
+  emitOrderPreparing,
+  emitOrderReady,
+} from "../socket/emitters.js";
 
 export const createOrder = async (userId: string, data: CreateOrderDto) => {
   const session = await mongoose.startSession();
@@ -150,13 +156,36 @@ export const createOrder = async (userId: string, data: CreateOrderDto) => {
 
     await session.commitTransaction();
 
-    logger.info({
-      orderId: order._id.toString(),
-      userId,
-      restaurantId: order.restaurantId.toString(),
-      total: order.total,
-    }, "Order created");
+    // Trigger Socket.IO updates
+    try {
+      emitNewOrder(restaurant._id.toString(), order._id.toString());
+    } catch (error) {
+      logger.error(
+        { error, restaurantId: restaurant._id, orderId: order._id },
+        "Failed to emit emitNewOrder event"
+      );
+    }
 
+    try {
+      emitOrderCreated(userId, order._id.toString());
+    } catch (error) {
+      logger.error(
+        { error, userId, orderId: order._id },
+        "Failed to emit emitOrderCreated event"
+      );
+    }
+
+    // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Order Creation
+
+    logger.info(
+      {
+        orderId: order._id.toString(),
+        userId,
+        restaurantId: order.restaurantId.toString(),
+        total: order.total,
+      },
+      "Order created",
+    );
 
     return {
       success: true,
@@ -238,12 +267,15 @@ export const cancelOrder = async (
   //     // Trigger refund workflow here
   //   }
 
-  logger.info({
-    orderId: order._id.toString(),
-    userId,
-    cancelledBy: role,
-    reason: data.reason,
-  }, "Order cancelled");
+  logger.info(
+    {
+      orderId: order._id.toString(),
+      userId,
+      cancelledBy: role,
+      reason: data.reason,
+    },
+    "Order cancelled",
+  );
 
   await order.save();
 
@@ -346,14 +378,36 @@ export const updateRestaurantUpdateStatus = async (
   const oldStatus = order.status;
   order.status = data.status;
 
-  logger.info({
-    orderId: order._id.toString(),
-    restaurantId: restaurant._id.toString(),
-    previousStatus: oldStatus,
-    newStatus: data.status,
-  }, "Order status updated");
+  logger.info(
+    {
+      orderId: order._id.toString(),
+      restaurantId: restaurant._id.toString(),
+      previousStatus: oldStatus,
+      newStatus: data.status,
+    },
+    "Order status updated",
+  );
 
   await order.save();
+
+  // Socket.IO emissions depending on status transition
+  try {
+    if (data.status === OrderStatus.ACCEPTED) {
+      emitOrderAccepted(order.userId.toString(), order._id.toString());
+      // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Order Accepted (Confirmed)
+    } else if (data.status === OrderStatus.PREPARING) {
+      emitOrderPreparing(order.userId.toString(), order._id.toString());
+      // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Order Preparing
+    } else if (data.status === OrderStatus.READY_FOR_PICKUP) {
+      emitOrderReady(order.userId.toString(), order._id.toString());
+      // TODO: Trigger future push notifications, Firebase notifications, BullMQ jobs, emails, and SMS for Order Ready for Pickup
+    }
+  } catch (error) {
+    logger.error(
+      { error, orderId: order._id, status: data.status },
+      "Failed to emit order status update socket event"
+    );
+  }
 
   return await buildOrderResponse(order._id.toString());
 };
