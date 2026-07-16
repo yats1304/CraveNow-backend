@@ -1,6 +1,7 @@
 import express from "express";
 import * as deliveryPartnerController from "../controllers/index.js";
 import * as riderLocationController from "../controllers/riderLocation.controller.js";
+import * as deliveryController from "../controllers/delivery.controller.js";
 import { isAuth } from "../middlewares/auth.middleware.js";
 import { authorizeRoles } from "../middlewares/authorizeRoles.middleware.js";
 import { UserRole } from "../types/user.types.js";
@@ -52,6 +53,13 @@ router.patch(
   authorizeRoles(UserRole.DELIVERY_PARTNER),
   validate(updateLocationSchema),
   riderLocationController.updateLocation,
+);
+
+router.get(
+  "/orders",
+  isAuth,
+  authorizeRoles(UserRole.DELIVERY_PARTNER),
+  deliveryController.getMyDeliveries,
 );
 
 // Upto this

@@ -26,6 +26,7 @@ export const generateOrderNumber = async (
       new: true,
       upsert: true,
       setDefaultsOnInsert: true,
+      session,
     },
   );
 

@@ -11,3 +11,4 @@ export * from "./counter.schema.js";
 export * from "./payment.schema.js";
 export * from "./deliveryPartner.schema.js";
 export * from "./riderLocation.schema.js";
+export * from "./delivery.schema.js";

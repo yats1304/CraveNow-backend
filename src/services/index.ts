@@ -10,3 +10,4 @@ export * from "./order.service.js";
 export * from "./payment.service.js";
 export * from "./deliveryPartner.service.js";
 export * from "./riderLocation.service.js";
+export * from "./delivery.service.js";

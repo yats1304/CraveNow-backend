@@ -7,3 +7,5 @@ export * from "./cart.model.js";
 export * from "./counter.model.js";
 export * from "./payment.model.js";
 export * from "./deliveryPartner.model.js";
+export * from "./delivery.model.js";
+export * from "./order.model.js";
