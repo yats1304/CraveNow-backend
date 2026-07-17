@@ -9,3 +9,4 @@ export * from "./payment.model.js";
 export * from "./deliveryPartner.model.js";
 export * from "./delivery.model.js";
 export * from "./order.model.js";
+export * from "./notification.model.js";

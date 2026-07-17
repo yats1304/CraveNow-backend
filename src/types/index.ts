@@ -14,3 +14,4 @@ export * from "./counter.types.js";
 export * from "./deliveryPartner.types.js";
 export * from "./riderLocation.types.js";
 export * from "./delivery.types.js";
+export * from "./notification.types.js";

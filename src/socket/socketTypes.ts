@@ -87,6 +87,11 @@ export interface ServerToClientEvents {
   }) => void;
 
   /**
+   * Notifications
+   */
+  "notification:received": (payload: any) => void;
+
+  /**
    * Errors
    */
   "socket:error": (payload: { message: string }) => void;

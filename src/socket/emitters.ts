@@ -4,8 +4,9 @@ import {
   getRestaurantRoom,
   getRiderRoom,
   getOrderRoom,
+  getAdminRoom,
 } from "./rooms.js";
-import { DeliveryStatus } from "../types/index.js";
+import { DeliveryStatus, NotificationRecipientType } from "../types/index.js";
 
 /**
  * Restaurant
@@ -142,3 +143,31 @@ export const emitSocketError = (room: string, message: string) => {
     message,
   });
 };
+
+/**
+ * Emit generic notification to recipient room
+ */
+export const emitNotification = (notification: any) => {
+  const io = getIO();
+  let room = "";
+
+  switch (notification.recipientType) {
+    case NotificationRecipientType.CUSTOMER:
+      room = getCustomerRoom(notification.recipientId.toString());
+      break;
+    case NotificationRecipientType.RESTAURANT:
+      room = getRestaurantRoom(notification.recipientId.toString());
+      break;
+    case NotificationRecipientType.DELIVERY_PARTNER:
+      room = getRiderRoom(notification.recipientId.toString());
+      break;
+    case NotificationRecipientType.ADMIN:
+      room = getAdminRoom();
+      break;
+  }
+
+  if (room) {
+    io.to(room).emit("notification:received", notification);
+  }
+};
+

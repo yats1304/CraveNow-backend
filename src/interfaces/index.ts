@@ -12,3 +12,4 @@ export * from "./payment.interface.js";
 export * from "./deliveryPartner.interface.js";
 export * from "./riderLocation.interface.js";
 export * from "./delivery.interface.js";
+export * from "./notification.interface.js";

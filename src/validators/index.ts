@@ -11,3 +11,4 @@ export * from "./payment.validator.js";
 export * from "./deliveryPartner.validator.js";
 export * from "./riderLocation.validator.js";
 export * from "./delivery.validator.js";
+export * from "./notification.validator.js";
