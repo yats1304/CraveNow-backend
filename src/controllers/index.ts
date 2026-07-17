@@ -8,3 +8,4 @@ export * from "./cart.controller.js";
 export * from "./order.controller.js";
 export * from "./payment.controller.js";
 export * from "./deliveryPartner.controller.js";
+export * from "./notification.controller.js";

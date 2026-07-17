@@ -10,6 +10,7 @@ import menuItemRoutes from "./routes/menuItems.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 import orderRoutes from "./routes/order.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
+import notificationRoutes from "./routes/notification.routes.js";
 import deliveryPartnerRoutes from "./routes/deliveryPartner.routes.js";
 import { globalErrorHandler } from "./middlewares/error.middleware.js";
 import { loggerMiddleware } from "./middlewares/logger.middleware.js";
@@ -34,6 +35,7 @@ app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/delivery-partner", deliveryPartnerRoutes);
+app.use("/api/v1/notification", notificationRoutes);
 
 // global error handler
 app.use(globalErrorHandler);

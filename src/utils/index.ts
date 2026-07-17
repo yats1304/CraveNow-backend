@@ -7,4 +7,4 @@ export * from "./mail.js";
 export * from "./cookie.js";
 export * from "./slugify.js";
 export * from "./location.js";
-export * from "./notifcation.dispatcher.js";
+export * from "../notification/notification.dispatcher.js";

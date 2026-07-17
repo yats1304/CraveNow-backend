@@ -11,3 +11,4 @@ export * from "./payment.service.js";
 export * from "./deliveryPartner.service.js";
 export * from "./riderLocation.service.js";
 export * from "./delivery.service.js";
+export * from "./notification.service.js";
