@@ -23,6 +23,7 @@ initializeSocket(server);
 
 server.listen(PORT, () => {
   logger.info(`Server running on http://localhost:${PORT}`);
+  logger.info(`API Documentation available at http://localhost:${PORT}/api-docs`);
 });
 
 // Graceful shutdown handling

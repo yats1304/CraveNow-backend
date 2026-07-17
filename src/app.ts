@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
 import authRoutes from "./routes/auth.routes.js";
 import addressRoutes from "./routes/address.routes.js";
 import restaurantRoutes from "./routes/restaurant.routes.js";
@@ -36,6 +38,7 @@ app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/delivery-partner", deliveryPartnerRoutes);
 app.use("/api/v1/notification", notificationRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // global error handler
 app.use(globalErrorHandler);
