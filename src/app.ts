@@ -15,6 +15,7 @@ import paymentRoutes from "./routes/payment.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import deliveryPartnerRoutes from "./routes/deliveryPartner.routes.js";
 import healthRoutes from "./routes/health.routes.js";
+import bullBoardRoutes from "./routes/bull-board.routes.js";
 import { globalErrorHandler } from "./middlewares/error.middleware.js";
 import { loggerMiddleware } from "./middlewares/logger.middleware.js";
 
@@ -40,6 +41,7 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/delivery-partner", deliveryPartnerRoutes);
 app.use("/api/v1/notification", notificationRoutes);
 app.use("/api/v1/health", healthRoutes);
+app.use("/admin/queues", bullBoardRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // global error handler

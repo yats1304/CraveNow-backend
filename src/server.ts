@@ -9,11 +9,13 @@ import {
   initNotificationWorker,
   shutdownNotificationWorker,
 } from "./notification/notification.worker.js";
+import { initBullBoard } from "./config/bull-board.js";
 
 const PORT = env.PORT;
 
 await connectDB();
 await connectRedis();
+await initBullBoard();
 
 // Start the background notification worker
 initNotificationWorker();
