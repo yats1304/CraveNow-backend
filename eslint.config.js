@@ -15,6 +15,7 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-wrapper-object-types": "warn",
+      "@typescript-eslint/no-empty-object-type": "off",
       "no-console": "off",
       "prefer-const": "warn",
       "no-useless-assignment": "warn",

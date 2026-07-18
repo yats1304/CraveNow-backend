@@ -62,7 +62,7 @@ export const addToCart = async (userId: string, data: AddToCartDto) => {
       );
     }
 
-    let cartItem = await CartItem.findOne(
+    const cartItem = await CartItem.findOne(
       { cartId: cart._id, menuItemId },
       null,
       { session },

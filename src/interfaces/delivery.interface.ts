@@ -8,7 +8,7 @@ export interface IDelivery extends Document {
   assignedAt: Date;
   assignmentExpiresAt: Date;
   cancelledBy?: Types.ObjectId;
-  reassignmentCount?: Number;
+  reassignmentCount?: number;
   acceptedAt?: Date;
   reachedPickupAt?: Date;
   pickedUpAt?: Date;

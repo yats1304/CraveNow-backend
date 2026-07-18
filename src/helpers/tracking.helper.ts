@@ -25,8 +25,8 @@ export const buildCustomerTrackingResponse = async (
   const rider = riderLocation.deliveryPartnerId as any;
 
   // Future calculations using Delivery assignment
-  let distance: number | null = null;
-  let eta: number | null = null;
+  const distance: number | null = null;
+  const eta: number | null = null;
 
   /*
    * TODO: Implement active delivery assignment integration once the Delivery module is completed:
