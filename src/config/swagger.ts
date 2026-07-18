@@ -12,6 +12,7 @@ import { orderPaths, orderSchemas } from "../docs/order.docs.js";
 import { paymentPaths, paymentSchemas } from "../docs/payment.docs.js";
 import { deliveryPaths, deliverySchemas } from "../docs/delivery.docs.js";
 import { notificationPaths, notificationSchemas } from "../docs/notification.docs.js";
+import { healthPaths, healthSchemas } from "../docs/health.docs.js";
 
 const options = {
   definition: {
@@ -49,6 +50,7 @@ const options = {
         ...paymentSchemas,
         ...deliverySchemas,
         ...notificationSchemas,
+        ...healthSchemas,
       },
     },
     security: [
@@ -68,6 +70,7 @@ const options = {
       ...paymentPaths,
       ...deliveryPaths,
       ...notificationPaths,
+      ...healthPaths,
     },
   },
   apis: [],
