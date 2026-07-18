@@ -3,6 +3,19 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
+import corsOptions from "./config/cors.js";
+import helmetMiddleware from "./config/helmet.js";
+import { globalLimiter, speedLimiter } from "./config/rate-limit.js";
+import { configureTrustProxy } from "./config/trust-proxy.js";
+import {
+  hppMiddleware,
+  mongoSanitizeMiddleware,
+  securityAuditMiddleware,
+} from "./middleware/security.middleware.js";
+import {
+  jsonSizeLimit,
+  urlEncodedSizeLimit,
+} from "./middleware/request-size.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import addressRoutes from "./routes/address.routes.js";
 import restaurantRoutes from "./routes/restaurant.routes.js";
@@ -21,11 +34,26 @@ import { loggerMiddleware } from "./middlewares/logger.middleware.js";
 
 const app = express();
 
-// middlewares
-app.use(cors());
+configureTrustProxy(app);
+
+app.use(helmetMiddleware);
+
+app.use(cors(corsOptions));
+
+app.use(speedLimiter);
+app.use(globalLimiter);
+
+app.use(hppMiddleware);
+app.use(mongoSanitizeMiddleware);
+app.use(securityAuditMiddleware);
+
 app.use(loggerMiddleware);
+
 app.use("/api/v1/payment/webhook", express.raw({ type: "application/json" }));
-app.use(express.json());
+
+app.use(jsonSizeLimit);
+app.use(urlEncodedSizeLimit);
+
 app.use(cookieParser());
 
 // routes

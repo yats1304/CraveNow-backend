@@ -2,6 +2,7 @@ import { Server as HttpServer } from "http";
 import { Server } from "socket.io";
 import { env } from "../config/env.js";
 import { logger } from "../config/logger.js";
+import { getSocketCorsOptions } from "../config/security.js";
 import {
   ClientToServerEvents,
   InterServerEvents,
@@ -20,16 +21,10 @@ let io: Server<
 
 export const initializeSocket = (server: HttpServer) => {
   io = new Server(server, {
-    cors: {
-      origin: env.CLIENT_URL || "*",
-      credentials: true,
-      methods: ["GET", "POST"],
-    },
-
+    cors: getSocketCorsOptions(),
     transports: ["websocket", "polling"],
   });
 
-  // Register authentication middleware
   io.use(socketAuthMiddleware);
 
   logger.info("Socket.IO server initialized");
