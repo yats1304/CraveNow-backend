@@ -22,7 +22,7 @@ export const registerSchema = z.object({
 
   phone: phoneSchema,
 
-  role: z.enum(UserRole),
+  role: z.enum(UserRole).optional(),
 });
 
 // Login
@@ -45,6 +45,12 @@ export const verifyOtpSchema = z.object({
 
 // Resend OTP
 export const resendOtpSchema = z.object({
+  email: emailSchema,
+  type: z.enum(["register", "forgot-password"]).optional(),
+});
+
+// Resend Forgot Password OTP
+export const resendForgotPasswordOtpSchema = z.object({
   email: emailSchema,
 });
 

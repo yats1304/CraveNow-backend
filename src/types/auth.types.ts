@@ -32,6 +32,11 @@ export interface LoginDto {
 
 export interface ResentOtpDto {
   email: string;
+  type?: "register" | "forgot-password";
+}
+
+export interface ResendForgotPasswordOtpDto {
+  email: string;
 }
 
 export interface ForgotPasswordDto {

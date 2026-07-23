@@ -5,18 +5,35 @@ import { logger } from "../config/logger.js";
 
 export const hppMiddleware = hpp();
 
-export const mongoSanitizeMiddleware = mongoSanitize();
+const sanitize = mongoSanitize();
+
+export const mongoSanitizeMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  if (req.query) {
+    Object.defineProperty(req, "query", {
+      value: { ...req.query },
+      writable: true,
+      configurable: true,
+      enumerable: true,
+    });
+  }
+  sanitize(req, res, next);
+};
 
 export const securityAuditMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction,
 ): void => {
-  const queryString = JSON.stringify(req.query);
-  const bodyString = JSON.stringify(req.body);
+  const queryString = JSON.stringify(req.query || {});
+  const bodyString = JSON.stringify(req.body || {});
 
   const hasSuspiciousOperators =
-    queryString.includes("$") || bodyString.includes("$");
+    (queryString && queryString.includes("$")) || 
+    (bodyString && bodyString.includes("$"));
 
   if (hasSuspiciousOperators) {
     logger.warn(

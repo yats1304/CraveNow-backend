@@ -1,3 +1,4 @@
+import { logger } from "../config/logger.js";
 import { redisClient } from "../config/redis.js";
 import {
   getRefreshKey,
@@ -6,8 +7,10 @@ import {
   OTP_RESEND_COOLDOWN,
   REFRESH_TOKEN_EXPIRY,
 } from "../constants/index.js";
+import { createUserSession } from "../helpers/index.js";
 import { User } from "../models/index.js";
 import { verificationEmailTemplate } from "../templates/email-verification.template.js";
+import { forgotPasswordTemplate } from "../templates/forgot-password.template.js";
 import { welcomeEmailTemplate } from "../templates/welcome.template.js";
 import {
   AccountStatus,
@@ -20,24 +23,22 @@ import {
   LogoutDto,
   refreshTokenDto,
   RegisterUserDto,
+  ResendForgotPasswordOtpDto,
   ResentOtpDto,
   ResetPasswordDto,
   VerifyOtpDto,
 } from "../types/index.js";
+import { verifyGoogleIdToken } from "../utils/google.js";
 import {
-  hashPassword,
-  ErrorHandler,
-  generateOtp,
-  sendMail,
-  generateAccessToken,
-  generateRefreshToken,
   comparePassword,
+  ErrorHandler,
+  generateAccessToken,
+  generateOtp,
+  generateRefreshToken,
+  hashPassword,
+  sendMail,
   verifyRefreshToken,
 } from "../utils/index.js";
-import { forgotPasswordTemplate } from "../templates/forgot-password.template.js";
-import { verifyGoogleIdToken } from "../utils/google.js";
-import { createUserSession } from "../helpers/index.js";
-import { logger } from "../config/logger.js";
 
 export const registerUser = async (registerData: RegisterUserDto) => {
   const { name, email, password, phone, role } = registerData;
@@ -123,11 +124,14 @@ export const verifyOtp = async (otpData: VerifyOtpDto) => {
     role: data.role,
   });
 
-  logger.info({
-    userId: user._id.toString(),
-    email: user.email,
-    role: user.role,
-  }, "User registered");
+  logger.info(
+    {
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    },
+    "User registered",
+  );
 
   await redisClient.del(registerKey);
 
@@ -137,11 +141,14 @@ export const verifyOtp = async (otpData: VerifyOtpDto) => {
     deviceId,
   });
 
-  logger.info({
-    userId: user._id.toString(),
-    email: user.email,
-    role: user.role,
-  }, "User logged in");
+  logger.info(
+    {
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    },
+    "User logged in",
+  );
 
   await sendMail({
     to: user.email,
@@ -192,11 +199,14 @@ export const login = async (loginData: LoginDto) => {
     deviceId,
   });
 
-  logger.info({
-    userId: user._id.toString(),
-    email: user.email,
-    role: user.role,
-  }, "User logged in");
+  logger.info(
+    {
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    },
+    "User logged in",
+  );
 
   return {
     success: true,
@@ -212,7 +222,11 @@ export const login = async (loginData: LoginDto) => {
 };
 
 // Resend OTP
-export const resendOtp = async ({ email }: ResentOtpDto) => {
+export const resendOtp = async ({ email, type }: ResentOtpDto) => {
+  if (type === "forgot-password") {
+    return resendForgotPasswordOtp({ email });
+  }
+
   const registerKey = `register:${email}`;
 
   const registerData = await redisClient.get(registerKey);
@@ -273,6 +287,90 @@ export const resendOtp = async ({ email }: ResentOtpDto) => {
   return {
     success: true,
     message: "A new OTP has been sent to your email.",
+  };
+};
+
+// Resend Forgot Password OTP
+export const resendForgotPasswordOtp = async ({
+  email,
+}: ResendForgotPasswordOtpDto) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new ErrorHandler(
+      404,
+      "Password reset session expired or user not found.",
+    );
+  }
+
+  if (user.provider === AuthProvider.GOOGLE) {
+    throw new ErrorHandler(400, "Please login with Google");
+  }
+
+  if (user.status === AccountStatus.BLOCKED) {
+    throw new ErrorHandler(403, "Your account has been blocked");
+  }
+
+  const forgotKey = `forgot:${email}`;
+
+  const forgotData = await redisClient.get(forgotKey);
+
+  if (!forgotData) {
+    throw new ErrorHandler(
+      404,
+      "Password reset session expired. Please request a new password reset.",
+    );
+  }
+
+  const data = JSON.parse(forgotData);
+
+  if (data.resendCount >= MAX_OTP_RESEND) {
+    throw new ErrorHandler(429, "Maximum OTP resend attempts reached.");
+  }
+
+  const now = Date.now();
+
+  const elapsedTime = now - data.lastOtpSentAt;
+
+  if (elapsedTime < OTP_RESEND_COOLDOWN * 1000) {
+    const remainingSeconds = Math.ceil(
+      (OTP_RESEND_COOLDOWN * 1000 - elapsedTime) / 1000,
+    );
+
+    throw new ErrorHandler(
+      429,
+      `Please wait ${remainingSeconds} seconds before requesting another OTP.`,
+    );
+  }
+
+  const otp = generateOtp();
+
+  data.otp = otp;
+  data.resendCount += 1;
+  data.lastOtpSentAt = now;
+
+  const ttl = await redisClient.ttl(forgotKey);
+
+  await redisClient.set(forgotKey, JSON.stringify(data), {
+    EX: ttl > 0 ? ttl : OTP_EXPIRY,
+  });
+
+  try {
+    await sendMail({
+      to: email,
+      subject: "Reset Your CraveNow Password",
+      html: forgotPasswordTemplate({
+        name: user.name,
+        otp,
+      }),
+    });
+  } catch (error) {
+    throw new ErrorHandler(500, "Failed to send reset email.");
+  }
+
+  return {
+    success: true,
+    message: "A new password reset OTP has been sent to your email.",
   };
 };
 
@@ -499,11 +597,14 @@ export const googleLogin = async ({ idToken, deviceId }: GoogleLoginDto) => {
       provider: AuthProvider.GOOGLE,
     });
 
-    logger.info({
-      userId: user._id.toString(),
-      email: user.email,
-      role: user.role,
-    }, "User registered via Google");
+    logger.info(
+      {
+        userId: user._id.toString(),
+        email: user.email,
+        role: user.role,
+      },
+      "User registered via Google",
+    );
   }
 
   const { accessToken, refreshToken } = await createUserSession({
@@ -512,11 +613,14 @@ export const googleLogin = async ({ idToken, deviceId }: GoogleLoginDto) => {
     deviceId,
   });
 
-  logger.info({
-    userId: user._id.toString(),
-    email: user.email,
-    role: user.role,
-  }, "User logged in via Google");
+  logger.info(
+    {
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    },
+    "User logged in via Google",
+  );
 
   return {
     success: true,

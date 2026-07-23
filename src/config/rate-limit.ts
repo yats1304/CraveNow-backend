@@ -14,6 +14,7 @@ const createLimiter = (
     max,
     standardHeaders: true,
     legacyHeaders: false,
+    validate: { trustProxy: false },
     handler: (req, res, next) => {
       logger.warn(
         {

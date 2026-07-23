@@ -29,6 +29,12 @@ export const resendOtp = TryCatch(async (req, res) => {
   return res.json(data);
 });
 
+export const resendForgotPasswordOtp = TryCatch(async (req, res) => {
+  const data = await authService.resendForgotPasswordOtp(req.body);
+
+  return res.json(data);
+});
+
 export const forgotPassword = TryCatch(async (req, res) => {
   const data = await authService.forgotPassword(req.body);
 

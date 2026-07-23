@@ -8,6 +8,7 @@ import {
   loginSchema,
   logoutSchema,
   registerSchema,
+  resendForgotPasswordOtpSchema,
   resendOtpSchema,
   resetPasswordSchema,
   verifyOtpSchema,
@@ -20,6 +21,11 @@ router.post("/register", validate(registerSchema), authController.register);
 router.post("/verify-otp", validate(verifyOtpSchema), authController.verifyOtp);
 router.post("/login", validate(loginSchema), authController.login);
 router.post("/resend-otp", validate(resendOtpSchema), authController.resendOtp);
+router.post(
+  "/resend-forgot-password-otp",
+  validate(resendForgotPasswordOtpSchema),
+  authController.resendForgotPasswordOtp,
+);
 router.post(
   "/forgot-password",
   validate(forgotPasswordSchema),
